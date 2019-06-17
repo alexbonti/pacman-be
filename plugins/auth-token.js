@@ -5,27 +5,26 @@
 
 var TokenManager = require('../lib/tokenManager');
 var UniversalFunc = require('../utils/universalFunctions');
+const AuthBearer = require('hapi-auth-bearer-token');
 
-exports.register = function (server, options, next) {
+exports.register = async function (server, options, next) {
 
+    await server.register(AuthBearer)
     //Register Authorization Plugin
-    server.register(require('hapi-auth-bearer-token'), {}, function (err) {
-        server.auth.strategy('UserAuth', 'bearer-access-token', {
-            allowQueryToken: false,
-            allowMultipleHeaders: true,
-            accessTokenName: 'accessToken',
-            validateFunc: function (token, callback) {
-                TokenManager.verifyToken(token, function (err, response) {
-                    if (err || !response || !response.userData) {
-                        callback(null, false, { token: token, userData: null })
-                    } else {
-                        callback(null, true, { token: token, userData: response.userData })
-                    }
-                });
-
+    server.auth.strategy('UserAuth', 'bearer-access-token', {
+        allowQueryToken: false,
+        allowMultipleHeaders: true,
+        accessTokenName: 'accessToken',
+        validate: async function (request, token, h) {
+            let isValid = false;
+            let credentials = await TokenManager.decodeToken(token)
+            if(credentials && credentials['userData']){
+                isValid = true; 
             }
-        });
+            return { isValid, credentials};
+        }
     });
 };
 
 exports.name = 'auth-token-plugin'
+

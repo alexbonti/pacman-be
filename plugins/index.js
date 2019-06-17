@@ -7,6 +7,6 @@ module.exports = [
     Inert,
     Vision,
     {plugin: require('./swagger')},
-    {plugin: require('./good-console')}
-    // {plugin: require('./auth-token')}
+    {plugin: require('./good-console')},
+    {plugin: require('./auth-token')}
 ];
