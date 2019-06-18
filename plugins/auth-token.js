@@ -17,7 +17,7 @@ exports.register = async function (server, options, next) {
         accessTokenName: 'accessToken',
         validate: async function (request, token, h) {
             let isValid = false;
-            let credentials = await TokenManager.decodeToken(token)
+            let credentials = await TokenManager.verifyToken(token)
             if(credentials && credentials['userData']){
                 isValid = true; 
             }
@@ -27,4 +27,3 @@ exports.register = async function (server, options, next) {
 };
 
 exports.name = 'auth-token-plugin'
-

@@ -87,5 +87,5 @@ var demoApi = {
   }
 };
 
-var DemoBaseRoute = [demoApi,demoApiAuth];
+var DemoBaseRoute = [demoApi];
 module.exports = DemoBaseRoute;
