@@ -11,6 +11,7 @@ var Config = require("./config");
 var Plugins = require("./Plugins");
 var SocketManager = require("./lib/socketManager");
 var Routes = require("./routes");
+var MongoConnect = require('./mongoConnect')
 
 const init = async () => {
   //Create Server
