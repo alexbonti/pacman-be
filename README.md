@@ -42,7 +42,7 @@ $ node -v
 
 $ npm -v
 ```
-## Setup Node Backend Boilerplate Application
+## Setup Node User Onboarding Application
 
 * Step1: Git clone the application
 
