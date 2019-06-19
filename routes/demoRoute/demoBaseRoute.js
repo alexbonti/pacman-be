@@ -1,5 +1,5 @@
 /**
- * Created by Navit on 15/11/16.
+ * Created by Navit
  */
 var UniversalFunctions = require("../../utils/universalFunctions");
 var Joi = require("joi");

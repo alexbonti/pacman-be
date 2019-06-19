@@ -1,5 +1,5 @@
-# Node.js getting started application
-The Getting Started tutorial for Node.js uses this sample application to provide you with a sample workflow for working with any Node.js app
+# Node.js User Onboarding application
+A Node based module using Mongodb to onboard user's into a very basic application, secured using JWT authorization.
 
 The Node.js app uses [Hapi Framework](https://hapijs.com)
 
@@ -47,9 +47,9 @@ $ npm -v
 * Step1: Git clone the application
 
 ```
-$ git clone https://github.com/deakin-launchpad/node-backend-boilerplate.git
+$ git clone https://github.com/ChoudharyNavit22/User-Onboarding-Module.git
 
-$ cd node-backend-boilerplate
+$ cd User-Onboarding-Module
 ```
 
 * Step2: Install node modules
@@ -62,7 +62,13 @@ or
 $ npm install
 ```
 
-* Step3: Start the application
+* Step3: Copy .env.example to .env
+
+```
+$ cp .env.example .env
+```
+
+* Step4: Start the application
 
 ```
 For Development Mode
