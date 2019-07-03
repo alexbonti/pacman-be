@@ -71,6 +71,11 @@ var STATUS_MSG = {
       customMessage: "Mobile No. Already Exist",
       type: "PHONE_NO_EXIST"
     },
+    EMAIL_NO_EXIST: {
+      statusCode: 400,
+      customMessage: "Email Address Already Exist",
+      type: "EMAIL_NO_EXIST"
+    },
     USERNAME_EXIST: {
       statusCode: 400,
       customMessage: "Username Already Exist",
@@ -104,7 +109,7 @@ var STATUS_MSG = {
     NOT_REGISTERED: {
       statusCode: 400,
       customMessage:
-        "You are not registered with YapApp. Kindly register yourself to avail services!",
+        "You are not registered with Us. Kindly register yourself to avail services!",
       type: "NOT_REGISTERED"
     },
     FACEBOOK_ID_NOT_FOUND: {
@@ -116,6 +121,11 @@ var STATUS_MSG = {
       statusCode: 400,
       customMessage: "Your mobile number verification is already completed.",
       type: "PHONE_VERIFICATION_COMPLETE"
+    },
+    EMAIL_VERIFICATION_COMPLETE: {
+      statusCode: 400,
+      customMessage: "Your email address verification is already completed.",
+      type: "EMAIL_VERIFICATION_COMPLETE"
     },
     OTP_CODE_NOT_FOUND: {
       statusCode: 400,

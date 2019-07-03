@@ -8,5 +8,5 @@ module.exports = [
     Vision,
     {plugin: require('./swagger')},
     {plugin: require('./good-console')},
-    //{plugin: require('./auth-token')}
+    {plugin: require('./auth-token')}
 ];
