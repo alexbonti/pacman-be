@@ -31,7 +31,15 @@ var user = new Schema({
   OTPCode: { type: String, trim: true },
   emailVerified: { type: Boolean, default: false },
   registrationDate: { type: Date, default: Date.now },
-  codeUpdatedAt: { type: Date, default: Date.now, required: true }
+  codeUpdatedAt: { type: Date, default: Date.now, required: true },
+  deviceToken: { type: String },
+  deviceType: {
+    type: String,
+    enum: [
+      Config.APP_CONSTANTS.DATABASE.DEVICE_TYPES.ANDROID,
+      Config.APP_CONSTANTS.DATABASE.DEVICE_TYPES.IOS
+    ]
+  }
 });
 
 module.exports = mongoose.model("user", user);
