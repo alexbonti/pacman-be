@@ -3,7 +3,7 @@
  */
 "use strict";
 
-var Models = require("../Models");
+var Models = require("../models");
 
 var updateUser = function(criteria, dataToSet, options, callback) {
   options.lean = true;

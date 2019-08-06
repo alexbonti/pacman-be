@@ -3,7 +3,7 @@
  */
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-var Config = require("../Config");
+var Config = require("../config");
 
 var user = new Schema({
   first_name: { type: String, trim: true, required: true },

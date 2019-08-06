@@ -1,7 +1,7 @@
 /**
  * Created by Navit on 23/01/2016 AD.
  */
-var Models = require('../Models');
+var Models = require('../models');
 
 var getForgetPasswordRequest = function (conditions, projection, options, callback ) {
     Models.ForgetPassword.find(conditions, projection, options, callback );

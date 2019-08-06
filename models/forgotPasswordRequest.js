@@ -3,7 +3,7 @@
  */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var CONFIG = require('../Config');
+var CONFIG = require('../config');
 
 var forgetPasswordRequests = new Schema({
     customerID: {type: Schema.ObjectId, ref: 'users'},

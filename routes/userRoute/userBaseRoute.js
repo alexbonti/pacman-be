@@ -1,10 +1,10 @@
 /**
  * Created by Navit on 15/11/16.
  */
-var UniversalFunctions = require("../../Utils/UniversalFunctions");
-var Controller = require("../../Controllers");
+var UniversalFunctions = require("../../utils/universalFunctions");
+var Controller = require("../../controllers");
 var Joi = require("joi");
-var Config = require("../../Config");
+var Config = require("../../config");
 
 var userRegister = {
   method: "POST",
