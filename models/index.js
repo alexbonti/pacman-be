@@ -4,5 +4,6 @@
 'use strict'
 module.exports = {
     User:require('./user'),
-    ForgetPassword:require('./forgotPasswordRequest')
+    ForgetPassword:require('./forgotPasswordRequest'),
+    Admin: require('./admin')
 };

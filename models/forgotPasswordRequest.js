@@ -1,5 +1,5 @@
 /**
- * Created by Navit on 23/01/2016 AD.
+ * Created by Navit
  */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;

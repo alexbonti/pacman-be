@@ -19,7 +19,8 @@ var DATABASE = {
     IOS: "IOS"
   },
   USER_ROLES: {
-    USER: "USER"
+    USER: "USER",
+    ADMIN: "ADMIN"
   }
 };
 
