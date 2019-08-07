@@ -202,7 +202,6 @@ module.exports = {
     sendSuccess: sendSuccess,
     failActionFunction: failActionFunction,
     authorizationHeaderObj: authorizationHeaderObj,
-    //forgetPasswordEmail: forgetPasswordEmail,
     validateLatLongValues:validateLatLongValues,
     validateString:validateString,
     verifyEmailFormat:verifyEmailFormat,

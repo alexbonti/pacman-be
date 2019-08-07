@@ -12,7 +12,16 @@ exports.bootstrapAdmin = function (callbackParent) {
             password: UniversalFunctions.CryptData("123456"),
             fullName: 'Launchpad Admin',
             userType: Config.APP_CONSTANTS.DATABASE.USER_ROLES.SUPERADMIN,
-            createdAt: UniversalFunctions.getTimestamp()
+            createdAt: UniversalFunctions.getTimestamp(),
+            firstLogin: true
+        },
+        {
+            emailId: 'launchpad2@admin.com',
+            password: UniversalFunctions.CryptData("123456"),
+            fullName: 'Launchpad Admin 2',
+            userType: Config.APP_CONSTANTS.DATABASE.USER_ROLES.SUPERADMIN,
+            createdAt: UniversalFunctions.getTimestamp(),
+            firstLogin: true
         }
     ];
 

@@ -15,7 +15,9 @@ var admin = new Schema({
         Config.APP_CONSTANTS.DATABASE.USER_ROLES.SUPERADMIN,
         Config.APP_CONSTANTS.DATABASE.USER_ROLES.ADMIN
     ]},
-    createdAt: {type: Date, required: true},
+    initialPassword:{type: String},
+    firstLogin:{type: Boolean, default: false},
+    createdAt: {type: Date, required: true, default:Date.now},
     isBlocked: {type: Boolean, default: false, required: true}
 });
 

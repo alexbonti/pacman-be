@@ -275,17 +275,20 @@ var loginUser = function(payloadData, callback) {
         if (!userFound) {
           cb(ERROR.USER_NOT_FOUND);
         } else {
-          if (
-            userFound &&
-            userFound.password !=
-              UniversalFunctions.CryptData(payloadData.password)
-          ) {
-            cb(ERROR.INCORRECT_PASSWORD);
-          } else if (userFound.emailVerified == false) {
-            cb(ERROR.NOT_REGISTERED);
-          } else {
-            successLogin = true;
-            cb();
+          if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+          else {
+            if (
+              userFound &&
+              userFound.password !=
+                UniversalFunctions.CryptData(payloadData.password)
+            ) {
+              cb(ERROR.INCORRECT_PASSWORD);
+            } else if (userFound.emailVerified == false) {
+              cb(ERROR.NOT_REGISTERED);
+            } else {
+              successLogin = true;
+              cb();
+            }
           }
         }
       },
@@ -312,12 +315,12 @@ var loginUser = function(payloadData, callback) {
           emailId: payloadData.emailId
         };
         var projection = {
-          _id: 1,
-          countryCode: 1,
-          phoneNumber: 1,
-          firstName: 1,
-          lastName: 1,
-          emailVerified: 1
+          password: 0,
+          accessToken: 0,
+          initialPassword: 0,
+          OTPCode: 0,
+          code: 0,
+          codeUpdatedAt: 0
         };
         var option = {
           lean: true
@@ -485,13 +488,17 @@ var accessTokenLogin = function(userData, callback) {
         var criteria = {
           _id: userData._id
         };
-        Service.UserService.getUser(criteria, {password:0}, {}, function(err, data) {
+        Service.UserService.getUser(criteria, { password: 0 }, {}, function(
+          err,
+          data
+        ) {
           if (err) cb(err);
           else {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
             else {
               userFound = (result && result[0]) || null;
-              cb();
+              if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
             }
           }
         });
@@ -537,7 +544,7 @@ var logoutCustomer = function(userData, callbackRoute) {
       },
       function(callback) {
         var condition = { _id: userData._id };
-        var dataToUpdate = { $unset: { accessToken: 1} };
+        var dataToUpdate = { $unset: { accessToken: 1 } };
         Service.UserService.updateUser(condition, dataToUpdate, {}, function(
           err,
           result
@@ -585,7 +592,8 @@ var getProfile = function(userData, callback) {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
             else {
               customerData = (data && data[0]) || null;
-              cb();
+              if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
             }
           }
         });
@@ -613,7 +621,11 @@ var changePassword = function(userData, payloadData, callbackRoute) {
             cb(err);
           } else {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-            else cb();
+            else{
+                customerData = (data && data[0]) || null;
+                if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+                else cb()
+            }
           }
         });
       },
@@ -705,10 +717,12 @@ var forgetPassword = function(payloadData, callback) {
               if (dataFound == null) {
                 cb(ERROR.USER_NOT_REGISTERED);
               } else {
-                if (dataFound.phoneVerified == false) {
-                  cb(ERROR.PHONE_VERIFICATION);
+                if (dataFound.emailVerified == false) {
+                  cb(ERROR.NOT_VERFIFIED);
                 } else {
-                  cb();
+                    userFound = (data && data[0]) || null;
+                    if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+                    else cb();
                 }
               }
             }
@@ -812,7 +826,6 @@ var forgetPassword = function(payloadData, callback) {
 };
 
 var resetPassword = function(payloadData, callbackRoute) {
-  console.log("hello");
   var foundData;
   var customerId = null;
   var data;
@@ -939,7 +952,6 @@ module.exports = {
   createUser: createUser,
   verifyOTP: verifyOTP,
   loginUser: loginUser,
-  loginViaFacebook: loginViaFacebook,
   resendOTP: resendOTP,
   getOTP: getOTP,
   accessTokenLogin: accessTokenLogin,

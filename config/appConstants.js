@@ -80,7 +80,7 @@ var STATUS_MSG = {
     },
     USERNAME_EXIST: {
       statusCode: 400,
-      customMessage: "Username Already Exist",
+      customMessage: "User Already Exist",
       type: "USERNAME_EXIST"
     },
     INVALID_TOKEN: {
@@ -108,10 +108,15 @@ var STATUS_MSG = {
       customMessage: "Incorrect Password",
       type: "INCORRECT_PASSWORD"
     },
-    ADMIN_BLOCKED:{
+    ACCOUNT_BLOCKED:{
       statusCode: 400,
       customMessage: "You account has been blocked by authorities. Please Contact them.",
-      type: "ADMIN_BLOCKED"
+      type: "ACCOUNT_BLOCKED"
+    },
+    PRIVILEGE_MISMATCH:{
+      statusCode: 400,
+      customMessage: "Your account doesnt have this privileges",
+      type: "PRIVILEGE_MISMATCH"
     },
     NOT_REGISTERED: {
       statusCode: 400,
