@@ -12,6 +12,7 @@ var Plugins = require("./plugins");
 var SocketManager = require("./lib/socketManager");
 var Routes = require("./routes");
 var MongoConnect = require('./mongoConnect')
+var BootStrap = require('./utils/bootStrap')
 
 const init = async () => {
   //Create Server
@@ -53,6 +54,10 @@ const init = async () => {
   server.route(Routes);
 
   SocketManager.connectSocket(server);
+
+  BootStrap.bootstrapAdmin(function(err){
+    if(err) console.log(err)
+  });
 
   server.events.on("response", function(request) {
     console.log(

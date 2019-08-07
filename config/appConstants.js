@@ -20,6 +20,7 @@ var DATABASE = {
   },
   USER_ROLES: {
     USER: "USER",
+    SUPERADMIN: "SUPERADMIN",
     ADMIN: "ADMIN"
   }
 };
@@ -106,6 +107,11 @@ var STATUS_MSG = {
       statusCode: 400,
       customMessage: "Incorrect Password",
       type: "INCORRECT_PASSWORD"
+    },
+    ADMIN_BLOCKED:{
+      statusCode: 400,
+      customMessage: "You account has been blocked by authorities. Please Contact them.",
+      type: "ADMIN_BLOCKED"
     },
     NOT_REGISTERED: {
       statusCode: 400,

@@ -6,8 +6,8 @@ var Schema = mongoose.Schema;
 var Config = require("../config");
 
 var user = new Schema({
-  first_name: { type: String, trim: true, required: true },
-  last_name: { type: String, trim: true, required: true },
+  firstName: { type: String, trim: true, required: true },
+  lastName: { type: String, trim: true, required: true },
   emailId: { type: String, trim: true, required: true, unique: true },
   accessToken: {
     type: String,
@@ -16,7 +16,6 @@ var user = new Schema({
     unique: true,
     sparse: true
   },
-  facebookId: { type: String, trim: true },
   phoneNumber: {
     type: String,
     required: true,
@@ -31,15 +30,7 @@ var user = new Schema({
   OTPCode: { type: String, trim: true },
   emailVerified: { type: Boolean, default: false },
   registrationDate: { type: Date, default: Date.now },
-  codeUpdatedAt: { type: Date, default: Date.now, required: true },
-  deviceToken: { type: String },
-  deviceType: {
-    type: String,
-    enum: [
-      Config.APP_CONSTANTS.DATABASE.DEVICE_TYPES.ANDROID,
-      Config.APP_CONSTANTS.DATABASE.DEVICE_TYPES.IOS
-    ]
-  }
+  codeUpdatedAt: { type: Date, default: Date.now, required: true }
 });
 
 module.exports = mongoose.model("user", user);

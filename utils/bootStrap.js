@@ -8,10 +8,10 @@ exports.bootstrapAdmin = function (callbackParent) {
 
     var adminData = [
         {
-            email: 'launchpad@admin.com',
+            emailId: 'launchpad@admin.com',
             password: UniversalFunctions.CryptData("123456"),
             fullName: 'Launchpad Admin',
-            userType: Config.APP_CONSTANTS.DATABASE.USER_ROLES.ADMIN,
+            userType: Config.APP_CONSTANTS.DATABASE.USER_ROLES.SUPERADMIN,
             createdAt: UniversalFunctions.getTimestamp()
         }
     ];
@@ -31,14 +31,40 @@ exports.bootstrapAdmin = function (callbackParent) {
 };
 
 function insertData(adminData, callbackParent) {
-    Service.AdminService.createAdmin(adminData, function (err, response) {
-        if(err){
-            console.log("Implementation err",err);
-            return callbackParent(err);
+    var _skip = false
+    async.series([
+        function(cb){
+            Service.AdminService.getAdmin({emailId:adminData.emailId},{},{},function(err,data){
+                if(err) cb(err)
+                else {
+                    if(data.length != 0) {
+                        _skip = true;
+                        cb()
+                    }
+                    else cb()
+                }
+            })
+        },
+        function(cb){
+            if(!_skip){
+                Service.AdminService.createAdmin(adminData, function (err, response) {
+                    if(err){
+                        console.log("Implementation err",err);
+                        cb(err)
+                    }
+                    else{
+                        console.log("Admin Added Succesfully");
+                        cb()
+                    }
+                });
+            }
+            else cb()
         }
-        else{
-            console.log("Admins Added Succesfully");
+    ],function(err,result){
+        if(err) return callbackParent(err)
+        else {
             return callbackParent(null);
         }
-    });
+    })
+    
 }

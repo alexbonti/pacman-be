@@ -7,11 +7,14 @@ var Schema = mongoose.Schema;
 var Config = require('../config');
 
 var admin = new Schema({
-    email: {type: String, unique: true, sparse: true},
+    emailId: {type: String, unique: true, sparse: true},
     fullName: {type: String},
     password: {type: String, required: true},
     accessToken: {type: String, select: false},
-    userType: {type: String, enum: [Config.APP_CONSTANTS.DATABASE.USER_ROLES.ADMIN]},
+    userType: {type: String, enum: [
+        Config.APP_CONSTANTS.DATABASE.USER_ROLES.SUPERADMIN,
+        Config.APP_CONSTANTS.DATABASE.USER_ROLES.ADMIN
+    ]},
     createdAt: {type: Date, required: true},
     isBlocked: {type: Boolean, default: false, required: true}
 });

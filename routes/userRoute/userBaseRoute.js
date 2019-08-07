@@ -44,12 +44,12 @@ var userRegister = {
     tags: ["api", "user"],
     validate: {
       payload: {
-        first_name: Joi.string()
+        firstName: Joi.string()
           .regex(/^[a-zA-Z ]+$/)
           .trim()
           .min(2)
           .required(),
-        last_name: Joi.string()
+        lastName: Joi.string()
           .regex(/^[a-zA-Z ]+$/)
           .trim()
           .min(2)
@@ -64,22 +64,8 @@ var userRegister = {
           .required()
           .trim(),
         password: Joi.string()
-          .optional()
+          .required()
           .min(5)
-          .allow(""),
-        facebookId: Joi.string()
-          .optional()
-          .trim()
-          .allow(""),
-        deviceType: Joi.string()
-          .required()
-          .valid([
-            Config.APP_CONSTANTS.DATABASE.DEVICE_TYPES.IOS,
-            Config.APP_CONSTANTS.DATABASE.DEVICE_TYPES.ANDROID
-          ]),
-        deviceToken: Joi.string()
-          .required()
-          .trim()
       },
       failAction: UniversalFunctions.failActionFunction
     },
@@ -179,65 +165,6 @@ var login = {
         password: Joi.string()
           .required()
           .min(5)
-          .trim(),
-        deviceType: Joi.string()
-          .required()
-          .valid([
-            UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.DEVICE_TYPES.IOS,
-            UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.DEVICE_TYPES
-              .ANDROID
-          ]),
-        deviceToken: Joi.string()
-          .required()
-          .trim()
-      },
-      failAction: UniversalFunctions.failActionFunction
-    },
-    plugins: {
-      "hapi-swagger": {
-        responseMessages:
-          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
-      }
-    }
-  }
-};
-
-var facebookLogin = {
-  method: "POST",
-  path: "/api/user/loginViaFacebook",
-  handler: function(request, h) {
-    var payloadData = request.payload;
-    return new Promise((resolve, reject) => {
-      Controller.UserBaseController.loginViaFacebook(payloadData, function(
-        err,
-        data
-      ) {
-        if (err) {
-          reject(UniversalFunctions.sendError(err));
-        } else {
-          resolve(UniversalFunctions.sendSuccess(null, data));
-        }
-      });
-    });
-  },
-  config: {
-    description: "Login Via Facebook For Customer",
-    tags: ["api", "customer"],
-    validate: {
-      payload: {
-        facebookId: Joi.string().required(),
-        deviceType: Joi.string()
-          .required()
-          .valid([
-            UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.DEVICE_TYPES.IOS,
-            UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.DEVICE_TYPES
-              .ANDROID
-          ]),
-        deviceToken: Joi.string()
-          .required()
-          .trim(),
-        appVersion: Joi.string()
-          .required()
           .trim()
       },
       failAction: UniversalFunctions.failActionFunction
@@ -347,7 +274,7 @@ var accessTokenLogin = {
       null;
     var data = request.payload;
     return new Promise((resolve, reject) => {
-      Controller.UserBaseController.accessTokenLogin(userData, data, function(
+      Controller.UserBaseController.accessTokenLogin(userData, function(
         err,
         data
       ) {
@@ -365,18 +292,6 @@ var accessTokenLogin = {
     auth: "UserAuth",
     validate: {
       headers: UniversalFunctions.authorizationHeaderObj,
-      payload: {
-        deviceToken: Joi.string()
-          .trim()
-          .required(),
-        deviceType: Joi.string()
-          .required()
-          .valid([
-            UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.DEVICE_TYPES.IOS,
-            UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.DEVICE_TYPES
-              .ANDROID
-          ])
-      },
       failAction: UniversalFunctions.failActionFunction
     },
     plugins: {
@@ -651,7 +566,6 @@ var UserBaseRoute = [
   userRegister,
   verifyOTP,
   login,
-  facebookLogin,
   resendOTP,
   getOTP,
   accessTokenLogin,
