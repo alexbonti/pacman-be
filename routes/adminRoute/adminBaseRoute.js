@@ -356,6 +356,57 @@ var getUser = {
     }
   };
 
+  var changePassword = {
+    method: "PUT",
+    path: "/api/admin/changePassword",
+    handler: function(request, h) {
+      var userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+      return new Promise((resolve, reject) => {
+        Controller.AdminBaseController.changePassword(
+          userData,
+          request.payload,
+          function(err, user) {
+            if (!err) {
+              resolve(
+                UniversalFunctions.sendSuccess(
+                  UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.SUCCESS
+                    .PASSWORD_RESET,
+                  user
+                )
+              );
+            } else {
+              reject(UniversalFunctions.sendError(err));
+            }
+          }
+        );
+      });
+    },
+    config: {
+      description: "change Password",
+      tags: ["api", "customer"],
+      auth: "UserAuth",
+      validate: {
+        headers: UniversalFunctions.authorizationHeaderObj,
+        payload: {
+          skip: Joi.boolean().required(),
+          oldPassword: Joi.string().when('skip',{is:false,then: Joi.string().required().min(5),otherwise: Joi.string().optional().allow("")}),
+          newPassword: Joi.string().when('skip',{is:false,then: Joi.string().required().min(5),otherwise: Joi.string().optional().allow("")})
+        },
+        failAction: UniversalFunctions.failActionFunction
+      },
+      plugins: {
+        "hapi-swagger": {
+          responseMessages:
+            UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+        }
+      }
+    }
+  };
+
 var AdminBaseRoute = [
   adminLogin,
   accessTokenLogin,
@@ -364,6 +415,7 @@ var AdminBaseRoute = [
   blockUnblockAdmin,
   createUser,
   getUser,
-  blockUnblockUser
+  blockUnblockUser,
+  changePassword
 ];
 module.exports = AdminBaseRoute;

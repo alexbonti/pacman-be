@@ -365,7 +365,8 @@ var getUser = function(userData,callback){
                 if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
                 else {
                   userFound = (data && data[0]) || null;
-                  cb()
+                  if(userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED)
+                  else cb()
                 }
               }
             });
@@ -406,7 +407,8 @@ var blockUnblockUser = function(userData,payloadData,callback){
                 if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
                 else {
                   userFound = (data && data[0]) || null;
-                  cb()
+                  if(userFound.isBlocked == true) cb(ERROR.ACCOUNT_BLOCKED)
+                  else cb()
                 }
               }
             });
@@ -440,6 +442,105 @@ var blockUnblockUser = function(userData,payloadData,callback){
     })
 }
 
+var changePassword = function(userData,payloadData,callbackRoute){
+    var oldPassword = UniversalFunctions.CryptData(payloadData.oldPassword);
+    var newPassword = UniversalFunctions.CryptData(payloadData.newPassword);
+    var customerData;
+    async.series(
+      [
+        function(cb) {
+          var query = {
+            _id: userData._id
+          };
+          var options = { lean: true };
+          Service.AdminService.getAdmin(query, {}, options, function(err, data) {
+            if (err) {
+              cb(err);
+            } else {
+              if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+              else {
+                customerData = (data && data[0]) || null;
+                if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+                else cb();
+              }
+            }
+          });
+        },
+        function(callback) {
+          var query = {
+            _id: userData._id
+          };
+          var projection = {
+            password: 1,
+            firstLogin: 1
+          };
+          var options = { lean: true };
+          Service.AdminService.getAdmin(query, projection, options, function(
+            err,
+            data
+          ) {
+            if (err) {
+              callback(err);
+            } else {
+              customerData = (data && data[0]) || null;
+              if (customerData == null) {
+                callback(ERROR.NOT_FOUND);
+              } else {
+                if (payloadData.skip == false) {
+                  if (
+                    data[0].password == oldPassword &&
+                    data[0].password != newPassword
+                  ) {
+                    callback(null);
+                  } else if (data[0].password != oldPassword) {
+                    callback(ERROR.WRONG_PASSWORD);
+                  } else if (data[0].password == newPassword) {
+                    callback(ERROR.NOT_UPDATE);
+                  }
+                }
+                else callback(null)
+              }
+            }
+          });
+        },
+        function(callback) {
+          var dataToUpdate;
+            if(payloadData.skip == true && customerData.firstLogin == false){
+              dataToUpdate = { $set: { firstLogin: true }, $unset:{initialPassword:1} };
+            }
+            else if (payloadData.skip == false && customerData.firstLogin == false) {
+                dataToUpdate = { $set: { password: newPassword ,firstLogin: true } , $unset:{initialPassword:1}};
+            }
+            else {
+              dataToUpdate = { $set: { password: newPassword } };
+            }
+          var condition = { _id: userData._id };
+          Service.AdminService.updateAdmin(condition, dataToUpdate, {}, function(
+            err,
+            user
+          ) {
+            if (err) {
+              callback(err);
+            } else {
+              if (!user || user.length == 0) {
+                callback(ERROR.NOT_FOUND);
+              } else {
+                callback(null);
+              }
+            }
+          });
+        }
+      ],
+      function(error, result) {
+        if (error) {
+          return callbackRoute(error);
+        } else {
+          return callbackRoute(null);
+        }
+      }
+    );
+}
+
 module.exports = {
   adminLogin: adminLogin,
   accessTokenLogin: accessTokenLogin,
@@ -448,5 +549,6 @@ module.exports = {
   blockUnblockAdmin: blockUnblockAdmin,
   createUser: createUser,
   getUser: getUser,
-  blockUnblockUser: blockUnblockUser
+  blockUnblockUser: blockUnblockUser,
+  changePassword: changePassword
 };

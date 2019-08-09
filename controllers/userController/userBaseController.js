@@ -103,6 +103,7 @@ var createUser = function(payloadData, callback) {
         dataToSave.OTPCode = uniqueCode;
         dataToSave.phoneNumber = payloadData.phoneNumber;
         dataToSave.registrationDate = new Date().toISOString();
+        dataToSave.firstLogin = true;
         Service.UserService.createUser(dataToSave, function(
           err,
           customerDataFromDB
@@ -496,7 +497,7 @@ var accessTokenLogin = function(userData, callback) {
           else {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
             else {
-              userFound = (result && result[0]) || null;
+              userFound = (data && data[0]) || null;
               if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
               else cb();
             }
@@ -609,6 +610,7 @@ var getProfile = function(userData, callback) {
 var changePassword = function(userData, payloadData, callbackRoute) {
   var oldPassword = UniversalFunctions.CryptData(payloadData.oldPassword);
   var newPassword = UniversalFunctions.CryptData(payloadData.newPassword);
+  var customerData;
   async.series(
     [
       function(cb) {
@@ -621,10 +623,10 @@ var changePassword = function(userData, payloadData, callbackRoute) {
             cb(err);
           } else {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
-            else{
-                customerData = (data && data[0]) || null;
-                if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
-                else cb()
+            else {
+              customerData = (data && data[0]) || null;
+              if (customerData.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+              else cb();
             }
           }
         });
@@ -634,7 +636,8 @@ var changePassword = function(userData, payloadData, callbackRoute) {
           _id: userData._id
         };
         var projection = {
-          password: 1
+          password: 1,
+          firstLogin: 1
         };
         var options = { lean: true };
         Service.UserService.getUser(query, projection, options, function(
@@ -644,26 +647,38 @@ var changePassword = function(userData, payloadData, callbackRoute) {
           if (err) {
             callback(err);
           } else {
-            var customerData = (data && data[0]) || null;
+            customerData = (data && data[0]) || null;
             if (customerData == null) {
               callback(ERROR.NOT_FOUND);
             } else {
-              if (
-                data[0].password == oldPassword &&
-                data[0].password != newPassword
-              ) {
-                callback(null);
-              } else if (data[0].password != oldPassword) {
-                callback(ERROR.WRONG_PASSWORD);
-              } else if (data[0].password == newPassword) {
-                callback(ERROR.NOT_UPDATE);
+              if (payloadData.skip == false) {
+                if (
+                  data[0].password == oldPassword &&
+                  data[0].password != newPassword
+                ) {
+                  callback(null);
+                } else if (data[0].password != oldPassword) {
+                  callback(ERROR.WRONG_PASSWORD);
+                } else if (data[0].password == newPassword) {
+                  callback(ERROR.NOT_UPDATE);
+                }
               }
+              else callback(null)
             }
           }
         });
       },
       function(callback) {
-        var dataToUpdate = { $set: { password: newPassword } };
+        var dataToUpdate;
+          if(payloadData.skip == true && customerData.firstLogin == false){
+            dataToUpdate = { $set: { firstLogin: true }, $unset:{initialPassword:1} };
+          }
+          else if (payloadData.skip == false && customerData.firstLogin == false) {
+            dataToUpdate = { $set: { password: newPassword ,firstLogin: true } , $unset:{initialPassword:1}};
+        }
+          else {
+            dataToUpdate = { $set: { password: newPassword } };
+          }
         var condition = { _id: userData._id };
         Service.UserService.updateUser(condition, dataToUpdate, {}, function(
           err,
@@ -720,9 +735,9 @@ var forgetPassword = function(payloadData, callback) {
                 if (dataFound.emailVerified == false) {
                   cb(ERROR.NOT_VERFIFIED);
                 } else {
-                    userFound = (data && data[0]) || null;
-                    if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
-                    else cb();
+                  userFound = (data && data[0]) || null;
+                  if (userFound.isBlocked) cb(ERROR.ACCOUNT_BLOCKED);
+                  else cb();
                 }
               }
             }

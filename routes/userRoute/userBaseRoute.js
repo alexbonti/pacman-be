@@ -437,12 +437,9 @@ var changePassword = {
     validate: {
       headers: UniversalFunctions.authorizationHeaderObj,
       payload: {
-        oldPassword: Joi.string()
-          .required()
-          .min(4),
-        newPassword: Joi.string()
-          .required()
-          .min(4)
+        skip: Joi.boolean().required(),
+        oldPassword: Joi.string().when('skip',{is:false,then: Joi.string().required().min(5),otherwise: Joi.string().optional().allow("")}),
+        newPassword: Joi.string().when('skip',{is:false,then: Joi.string().required().min(5),otherwise: Joi.string().optional().allow("")})
       },
       failAction: UniversalFunctions.failActionFunction
     },
