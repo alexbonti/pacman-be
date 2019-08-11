@@ -407,6 +407,50 @@ var getUser = {
     }
   };
 
+  var logoutAdmin = {
+    method: "PUT",
+    path: "/api/admin/logout",
+    config: {
+      description: "Logout admin",
+      auth: "UserAuth",
+      tags: ["api", "admin"],
+      handler: function(request, h) {
+        var userData =
+          (request.auth &&
+            request.auth.credentials &&
+            request.auth.credentials.userData) ||
+          null;
+        return new Promise((resolve, reject) => {
+          Controller.AdminBaseController.logoutAdmin(userData, function(
+            err,
+            data
+          ) {
+            if (err) {
+              reject(UniversalFunctions.sendError(err));
+            } else {
+              resolve(
+                UniversalFunctions.sendSuccess(
+                  UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.SUCCESS
+                    .LOGOUT
+                )
+              );
+            }
+          });
+        });
+      },
+      validate: {
+        headers: UniversalFunctions.authorizationHeaderObj,
+        failAction: UniversalFunctions.failActionFunction
+      },
+      plugins: {
+        "hapi-swagger": {
+          responseMessages:
+            UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+        }
+      }
+    }
+  };
+
 var AdminBaseRoute = [
   adminLogin,
   accessTokenLogin,
@@ -416,6 +460,7 @@ var AdminBaseRoute = [
   createUser,
   getUser,
   blockUnblockUser,
-  changePassword
+  changePassword,
+  logoutAdmin
 ];
 module.exports = AdminBaseRoute;
