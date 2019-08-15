@@ -32,6 +32,26 @@ var STATUS_MSG = {
       customMessage: "Error",
       type: "DEFAULT"
     },
+    APP_ERROR: {
+      statusCode: 400,
+      customMessage: 'Application error',
+      type: 'APP_ERROR'
+    },
+    DB_ERROR: {
+      statusCode: 400,
+      customMessage: 'DB Error : ',
+      type: 'DB_ERROR'
+    },
+    INVALID_ID: {
+      statusCode: 400,
+      customMessage: 'Invalid id provided : ',
+      type: 'INVALID_ID'
+    },
+    DUPLICATE: {
+      statusCode: 400,
+      customMessage: 'Duplicate entry',
+      type: 'DUPLICATE'
+    },
     USER_ALREADY_REGISTERED: {
       statusCode: 409,
       customMessage: "You are already registered with us",
@@ -108,12 +128,12 @@ var STATUS_MSG = {
       customMessage: "Incorrect Password",
       type: "INCORRECT_PASSWORD"
     },
-    ACCOUNT_BLOCKED:{
+    ACCOUNT_BLOCKED: {
       statusCode: 400,
       customMessage: "You account has been blocked by authorities. Please Contact them.",
       type: "ACCOUNT_BLOCKED"
     },
-    PRIVILEGE_MISMATCH:{
+    PRIVILEGE_MISMATCH: {
       statusCode: 400,
       customMessage: "Your account doesnt have this privileges",
       type: "PRIVILEGE_MISMATCH"
@@ -240,7 +260,7 @@ var TIME_UNITS = {
   DAYS: "days"
 };
 
-const CUSTOM_ERROR_404 = function(msg) {
+const CUSTOM_ERROR_404 = function (msg) {
   return {
     statusCode: 404,
     customMessage: msg + " NOT FOUND",
@@ -248,7 +268,7 @@ const CUSTOM_ERROR_404 = function(msg) {
   };
 };
 
-const CUSTOM_ERROR = function(msg, statusCode) {
+const CUSTOM_ERROR = function (msg, statusCode) {
   return {
     statusCode: statusCode || 400,
     customMessage: msg
