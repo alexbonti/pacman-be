@@ -3,6 +3,17 @@ A Node based module using Mongodb to onboard user's into a very basic applicatio
 
 The Node.js app uses [Hapi Framework](https://hapijs.com)
 
+# Contents
+
+* [Manual Deployment](#manual-deployment)
+* [Upload Image/Document Guidelines](UPLOAD_IMAGE_GUIDLINE.md)
+
+# Project Dependencies
+
+* MongoDB ([Install MongoDB](https://docs.mongodb.com/manual/administration/install-community/))
+
+# <a id="manual-deployment"></a>Manual Deployment
+
 ## Setup Node.js
 
 Inorder to setup NodeJS you need to fellow the current steps:
