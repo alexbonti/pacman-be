@@ -508,6 +508,9 @@ var changePassword = function (userData, payloadData, callbackRoute) {
         else if (payloadData.skip == false && customerData.firstLogin == false) {
           dataToUpdate = { $set: { password: newPassword, firstLogin: true }, $unset: { initialPassword: 1 } };
         }
+        else if (payloadData.skip == true && customerData.firstLogin == true) {
+          dataToUpdate = {}
+        }
         else {
           dataToUpdate = { $set: { password: newPassword } };
         }

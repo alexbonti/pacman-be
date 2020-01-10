@@ -10,7 +10,7 @@ var CodeGenerator = require("../../lib/codeGenerator");
 var ERROR = UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR;
 var _ = require("underscore");
 
-var createUser = function(payloadData, callback) {
+var createUser = function (payloadData, callback) {
   var accessToken = null;
   var uniqueCode = null;
   var dataToSave = payloadData;
@@ -20,11 +20,11 @@ var createUser = function(payloadData, callback) {
   var appVersion = null;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var query = {
           $or: [{ emailId: payloadData.emailId }]
         };
-        Service.UserService.getUser(query, {}, { lean: true }, function(
+        Service.UserService.getUser(query, {}, { lean: true }, function (
           error,
           data
         ) {
@@ -35,7 +35,7 @@ var createUser = function(payloadData, callback) {
               if (data[0].emailVerified == true) {
                 cb(ERROR.USER_ALREADY_REGISTERED);
               } else {
-                Service.UserService.deleteUser({ _id: data[0]._id }, function(
+                Service.UserService.deleteUser({ _id: data[0]._id }, function (
                   err,
                   updatedData
                 ) {
@@ -49,7 +49,7 @@ var createUser = function(payloadData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         //Validate for facebookId and password
         if (!dataToSave.password) {
           cb(ERROR.PASSWORD_REQUIRED);
@@ -57,7 +57,7 @@ var createUser = function(payloadData, callback) {
           cb();
         }
       },
-      function(cb) {
+      function (cb) {
         //Validate countryCode
         if (dataToSave.countryCode.lastIndexOf("+") == 0) {
           if (!isFinite(dataToSave.countryCode.substr(1))) {
@@ -69,7 +69,7 @@ var createUser = function(payloadData, callback) {
           cb(ERROR.INVALID_COUNTRY_CODE);
         }
       },
-      function(cb) {
+      function (cb) {
         //Validate phone No
         if (
           dataToSave.phoneNumber &&
@@ -80,11 +80,11 @@ var createUser = function(payloadData, callback) {
           cb();
         }
       },
-      function(cb) {
+      function (cb) {
         CodeGenerator.generateUniqueCode(
           6,
           UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.USER,
-          function(err, numberObj) {
+          function (err, numberObj) {
             if (err) {
               cb(err);
             } else {
@@ -98,13 +98,13 @@ var createUser = function(payloadData, callback) {
           }
         );
       },
-      function(cb) {
+      function (cb) {
         //Insert Into DB
         dataToSave.OTPCode = uniqueCode;
         dataToSave.phoneNumber = payloadData.phoneNumber;
         dataToSave.registrationDate = new Date().toISOString();
         dataToSave.firstLogin = true;
-        Service.UserService.createUser(dataToSave, function(
+        Service.UserService.createUser(dataToSave, function (
           err,
           customerDataFromDB
         ) {
@@ -131,7 +131,7 @@ var createUser = function(payloadData, callback) {
       //     }
       //
       // },
-      function(cb) {
+      function (cb) {
         //Set Access Token
         if (customerData) {
           var tokenData = {
@@ -139,7 +139,7 @@ var createUser = function(payloadData, callback) {
             type:
               UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.USER
           };
-          TokenManager.setToken(tokenData, function(err, output) {
+          TokenManager.setToken(tokenData, function (err, output) {
             if (err) {
               cb(err);
             } else {
@@ -151,7 +151,7 @@ var createUser = function(payloadData, callback) {
           cb(ERROR.IMP_ERROR);
         }
       },
-      function(cb) {
+      function (cb) {
         appVersion = {
           latestIOSVersion: 100,
           latestAndroidVersion: 100,
@@ -161,7 +161,7 @@ var createUser = function(payloadData, callback) {
         cb(null);
       }
     ],
-    function(err, data) {
+    function (err, data) {
       if (err) {
         callback(err);
       } else {
@@ -178,16 +178,16 @@ var createUser = function(payloadData, callback) {
   );
 };
 
-var verifyOTP = function(userData, payloadData, callback) {
+var verifyOTP = function (userData, payloadData, callback) {
   var customerData;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var query = {
           _id: userData._id
         };
         var options = { lean: true };
-        Service.UserService.getUser(query, {}, options, function(err, data) {
+        Service.UserService.getUser(query, {}, options, function (err, data) {
           if (err) {
             cb(err);
           } else {
@@ -199,7 +199,7 @@ var verifyOTP = function(userData, payloadData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         //Check verification code :
         if (payloadData.OTPCode == customerData.OTPCode) {
           cb();
@@ -207,7 +207,7 @@ var verifyOTP = function(userData, payloadData, callback) {
           cb(ERROR.INVALID_CODE);
         }
       },
-      function(cb) {
+      function (cb) {
         //trying to update customer
         var criteria = {
           _id: userData._id,
@@ -218,7 +218,7 @@ var verifyOTP = function(userData, payloadData, callback) {
           $unset: { OTPCode: 1 }
         };
         var options = { new: true };
-        Service.UserService.updateUser(criteria, setQuery, options, function(
+        Service.UserService.updateUser(criteria, setQuery, options, function (
           err,
           updatedData
         ) {
@@ -234,7 +234,7 @@ var verifyOTP = function(userData, payloadData, callback) {
         });
       }
     ],
-    function(err, result) {
+    function (err, result) {
       if (err) {
         callback(err);
       } else {
@@ -244,7 +244,7 @@ var verifyOTP = function(userData, payloadData, callback) {
   );
 };
 
-var loginUser = function(payloadData, callback) {
+var loginUser = function (payloadData, callback) {
   var userFound = false;
   var accessToken = null;
   var successLogin = false;
@@ -252,14 +252,14 @@ var loginUser = function(payloadData, callback) {
   var appVersion = null;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var criteria = {
           emailId: payloadData.emailId
         };
         var option = {
           lean: true
         };
-        Service.UserService.getUser(criteria, {}, option, function(
+        Service.UserService.getUser(criteria, {}, option, function (
           err,
           result
         ) {
@@ -271,7 +271,7 @@ var loginUser = function(payloadData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         //validations
         if (!userFound) {
           cb(ERROR.USER_NOT_FOUND);
@@ -281,7 +281,7 @@ var loginUser = function(payloadData, callback) {
             if (
               userFound &&
               userFound.password !=
-                UniversalFunctions.CryptData(payloadData.password)
+              UniversalFunctions.CryptData(payloadData.password)
             ) {
               cb(ERROR.INCORRECT_PASSWORD);
             } else if (userFound.emailVerified == false) {
@@ -293,7 +293,7 @@ var loginUser = function(payloadData, callback) {
           }
         }
       },
-      function(cb) {
+      function (cb) {
         var criteria = {
           _id: userFound._id
         };
@@ -305,13 +305,13 @@ var loginUser = function(payloadData, callback) {
           criteria,
           setQuery,
           { new: true },
-          function(err, data) {
+          function (err, data) {
             updatedUserDetails = data;
             cb(err, data);
           }
         );
       },
-      function(cb) {
+      function (cb) {
         var criteria = {
           emailId: payloadData.emailId
         };
@@ -326,7 +326,7 @@ var loginUser = function(payloadData, callback) {
         var option = {
           lean: true
         };
-        Service.UserService.getUser(criteria, projection, option, function(
+        Service.UserService.getUser(criteria, projection, option, function (
           err,
           result
         ) {
@@ -338,14 +338,14 @@ var loginUser = function(payloadData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         if (successLogin) {
           var tokenData = {
             id: userFound._id,
             type:
               UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.USER
           };
-          TokenManager.setToken(tokenData, function(err, output) {
+          TokenManager.setToken(tokenData, function (err, output) {
             if (err) {
               cb(err);
             } else {
@@ -361,7 +361,7 @@ var loginUser = function(payloadData, callback) {
           cb(ERROR.IMP_ERROR);
         }
       },
-      function(cb) {
+      function (cb) {
         appVersion = {
           latestIOSVersion: 100,
           latestAndroidVersion: 100,
@@ -371,7 +371,7 @@ var loginUser = function(payloadData, callback) {
         cb(null);
       }
     ],
-    function(err, data) {
+    function (err, data) {
       if (err) {
         callback(err);
       } else {
@@ -385,7 +385,7 @@ var loginUser = function(payloadData, callback) {
   );
 };
 
-var resendOTP = function(userData, callback) {
+var resendOTP = function (userData, callback) {
   /*
      Create a Unique 6 digit code
      Insert It Into Customer DB
@@ -395,12 +395,12 @@ var resendOTP = function(userData, callback) {
   var customerData;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var query = {
           _id: userData._id
         };
         var options = { lean: true };
-        Service.UserService.getUser(query, {}, options, function(err, data) {
+        Service.UserService.getUser(query, {}, options, function (err, data) {
           if (err) {
             cb(err);
           } else {
@@ -416,11 +416,11 @@ var resendOTP = function(userData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         CodeGenerator.generateUniqueCode(
           6,
           UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.USER,
-          function(err, numberObj) {
+          function (err, numberObj) {
             if (err) {
               cb(err);
             } else {
@@ -434,7 +434,7 @@ var resendOTP = function(userData, callback) {
           }
         );
       },
-      function(cb) {
+      function (cb) {
         var criteria = {
           _id: userData._id
         };
@@ -450,13 +450,13 @@ var resendOTP = function(userData, callback) {
         Service.UserService.updateUser(criteria, setQuery, options, cb);
       }
     ],
-    function(err, result) {
+    function (err, result) {
       callback(err, { OTPCode: uniqueCode });
     }
   );
 };
 
-var getOTP = function(payloadData, callback) {
+var getOTP = function (payloadData, callback) {
   var query = {
     emailId: payloadData.emailId
   };
@@ -465,7 +465,7 @@ var getOTP = function(payloadData, callback) {
     OTPCode: 1
   };
   var options = { lean: true };
-  Service.UserService.getUser(query, projection, options, function(err, data) {
+  Service.UserService.getUser(query, projection, options, function (err, data) {
     if (err) {
       callback(err);
     } else {
@@ -479,17 +479,17 @@ var getOTP = function(payloadData, callback) {
   });
 };
 
-var accessTokenLogin = function(userData, callback) {
+var accessTokenLogin = function (userData, callback) {
   var appVersion;
   var userdata = {};
   var userFound = null;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var criteria = {
           _id: userData._id
         };
-        Service.UserService.getUser(criteria, { password: 0 }, {}, function(
+        Service.UserService.getUser(criteria, { password: 0 }, {}, function (
           err,
           data
         ) {
@@ -504,7 +504,7 @@ var accessTokenLogin = function(userData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         appVersion = {
           latestIOSVersion: 100,
           latestAndroidVersion: 100,
@@ -514,7 +514,7 @@ var accessTokenLogin = function(userData, callback) {
         cb(null);
       }
     ],
-    function(err, user) {
+    function (err, user) {
       if (!err)
         callback(null, {
           accessToken: userdata.accessToken,
@@ -526,14 +526,14 @@ var accessTokenLogin = function(userData, callback) {
   );
 };
 
-var logoutCustomer = function(userData, callbackRoute) {
+var logoutCustomer = function (userData, callbackRoute) {
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var criteria = {
           _id: userData._id
         };
-        Service.UserService.getUser(criteria, {}, {}, function(err, data) {
+        Service.UserService.getUser(criteria, {}, {}, function (err, data) {
           if (err) cb(err);
           else {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
@@ -543,10 +543,10 @@ var logoutCustomer = function(userData, callbackRoute) {
           }
         });
       },
-      function(callback) {
+      function (callback) {
         var condition = { _id: userData._id };
         var dataToUpdate = { $unset: { accessToken: 1 } };
-        Service.UserService.updateUser(condition, dataToUpdate, {}, function(
+        Service.UserService.updateUser(condition, dataToUpdate, {}, function (
           err,
           result
         ) {
@@ -558,7 +558,7 @@ var logoutCustomer = function(userData, callbackRoute) {
         });
       }
     ],
-    function(error, result) {
+    function (error, result) {
       if (error) {
         return callbackRoute(error);
       } else {
@@ -568,11 +568,11 @@ var logoutCustomer = function(userData, callbackRoute) {
   );
 };
 
-var getProfile = function(userData, callback) {
+var getProfile = function (userData, callback) {
   var customerData;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var query = {
           _id: userData._id
         };
@@ -583,7 +583,7 @@ var getProfile = function(userData, callback) {
           codeUpdatedAt: 0
         };
         var options = { lean: true };
-        Service.UserService.getUser(query, projection, options, function(
+        Service.UserService.getUser(query, projection, options, function (
           err,
           data
         ) {
@@ -600,25 +600,25 @@ var getProfile = function(userData, callback) {
         });
       }
     ],
-    function(err, result) {
+    function (err, result) {
       if (err) callback(err);
       else callback(null, { customerData: customerData });
     }
   );
 };
 
-var changePassword = function(userData, payloadData, callbackRoute) {
+var changePassword = function (userData, payloadData, callbackRoute) {
   var oldPassword = UniversalFunctions.CryptData(payloadData.oldPassword);
   var newPassword = UniversalFunctions.CryptData(payloadData.newPassword);
   var customerData;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var query = {
           _id: userData._id
         };
         var options = { lean: true };
-        Service.UserService.getUser(query, {}, options, function(err, data) {
+        Service.UserService.getUser(query, {}, options, function (err, data) {
           if (err) {
             cb(err);
           } else {
@@ -631,7 +631,7 @@ var changePassword = function(userData, payloadData, callbackRoute) {
           }
         });
       },
-      function(callback) {
+      function (callback) {
         var query = {
           _id: userData._id
         };
@@ -640,7 +640,7 @@ var changePassword = function(userData, payloadData, callbackRoute) {
           firstLogin: 1
         };
         var options = { lean: true };
-        Service.UserService.getUser(query, projection, options, function(
+        Service.UserService.getUser(query, projection, options, function (
           err,
           data
         ) {
@@ -668,19 +668,22 @@ var changePassword = function(userData, payloadData, callbackRoute) {
           }
         });
       },
-      function(callback) {
+      function (callback) {
         var dataToUpdate;
-          if(payloadData.skip == true && customerData.firstLogin == false){
-            dataToUpdate = { $set: { firstLogin: true }, $unset:{initialPassword:1} };
-          }
-          else if (payloadData.skip == false && customerData.firstLogin == false) {
-            dataToUpdate = { $set: { password: newPassword ,firstLogin: true } , $unset:{initialPassword:1}};
+        if (payloadData.skip == true && customerData.firstLogin == false) {
+          dataToUpdate = { $set: { firstLogin: true }, $unset: { initialPassword: 1 } };
         }
-          else {
-            dataToUpdate = { $set: { password: newPassword } };
-          }
+        else if (payloadData.skip == false && customerData.firstLogin == false) {
+          dataToUpdate = { $set: { password: newPassword, firstLogin: true }, $unset: { initialPassword: 1 } };
+        }
+        else if (payloadData.skip == true && customerData.firstLogin == true) {
+          dataToUpdate = {}
+        }
+        else {
+          dataToUpdate = { $set: { password: newPassword } };
+        }
         var condition = { _id: userData._id };
-        Service.UserService.updateUser(condition, dataToUpdate, {}, function(
+        Service.UserService.updateUser(condition, dataToUpdate, {}, function (
           err,
           user
         ) {
@@ -696,7 +699,7 @@ var changePassword = function(userData, payloadData, callbackRoute) {
         });
       }
     ],
-    function(error, result) {
+    function (error, result) {
       if (error) {
         return callbackRoute(error);
       } else {
@@ -706,13 +709,13 @@ var changePassword = function(userData, payloadData, callbackRoute) {
   );
 };
 
-var forgetPassword = function(payloadData, callback) {
+var forgetPassword = function (payloadData, callback) {
   var dataFound = null;
   var code;
   var forgotDataEntry;
   async.series(
     [
-      function(cb) {
+      function (cb) {
         var query = {
           emailId: payloadData.emailId
         };
@@ -724,7 +727,7 @@ var forgetPassword = function(payloadData, callback) {
             emailVerified: 1
           },
           {},
-          function(err, data) {
+          function (err, data) {
             if (err) {
               cb(ERROR.PASSWORD_CHANGE_REQUEST_INVALID);
             } else {
@@ -744,11 +747,11 @@ var forgetPassword = function(payloadData, callback) {
           }
         );
       },
-      function(cb) {
+      function (cb) {
         CodeGenerator.generateUniqueCode(
           6,
           UniversalFunctions.CONFIG.APP_CONSTANTS.DATABASE.USER_ROLES.USER,
-          function(err, numberObj) {
+          function (err, numberObj) {
             if (err) {
               cb(err);
             } else {
@@ -762,14 +765,14 @@ var forgetPassword = function(payloadData, callback) {
           }
         );
       },
-      function(cb) {
+      function (cb) {
         var dataToUpdate = {
           code: code
         };
         var query = {
           _id: dataFound._id
         };
-        Service.UserService.updateUser(query, dataToUpdate, {}, function(
+        Service.UserService.updateUser(query, dataToUpdate, {}, function (
           err,
           data
         ) {
@@ -780,7 +783,7 @@ var forgetPassword = function(payloadData, callback) {
           }
         });
       },
-      function(cb) {
+      function (cb) {
         Service.ForgetPasswordService.getForgetPasswordRequest(
           { customerID: dataFound._id },
           {
@@ -788,7 +791,7 @@ var forgetPassword = function(payloadData, callback) {
             isChanged: 1
           },
           { lean: 1 },
-          function(err, data) {
+          function (err, data) {
             if (err) {
               cb(err);
             } else {
@@ -798,7 +801,7 @@ var forgetPassword = function(payloadData, callback) {
           }
         );
       },
-      function(cb) {
+      function (cb) {
         var data = {
           customerID: dataFound._id,
           requestedAt: Date.now(),
@@ -808,7 +811,7 @@ var forgetPassword = function(payloadData, callback) {
         if (forgotDataEntry == null) {
           Service.ForgetPasswordService.createForgetPasswordRequest(
             data,
-            function(err, data) {
+            function (err, data) {
               if (err) {
                 cb(err);
               } else {
@@ -830,7 +833,7 @@ var forgetPassword = function(payloadData, callback) {
         }
       }
     ],
-    function(error, result) {
+    function (error, result) {
       if (error) {
         callback(error);
       } else {
@@ -840,13 +843,13 @@ var forgetPassword = function(payloadData, callback) {
   );
 };
 
-var resetPassword = function(payloadData, callbackRoute) {
+var resetPassword = function (payloadData, callbackRoute) {
   var foundData;
   var customerId = null;
   var data;
   async.series(
     [
-      function(callback) {
+      function (callback) {
         var query = {
           emailId: payloadData.emailId
         };
@@ -858,7 +861,7 @@ var resetPassword = function(payloadData, callbackRoute) {
             emailVerified: 1
           },
           { lean: true },
-          function(err, result) {
+          function (err, result) {
             if (err) {
               callback(err);
             } else {
@@ -881,7 +884,7 @@ var resetPassword = function(payloadData, callbackRoute) {
           }
         );
       },
-      function(callback) {
+      function (callback) {
         var query = { customerID: customerId, isChanged: false };
         Service.ForgetPasswordService.getForgetPasswordRequest(
           query,
@@ -890,7 +893,7 @@ var resetPassword = function(payloadData, callbackRoute) {
             limit: 1,
             lean: true
           },
-          function(err, data) {
+          function (err, data) {
             if (err) {
               callback(err);
             } else {
@@ -900,7 +903,7 @@ var resetPassword = function(payloadData, callbackRoute) {
           }
         );
       },
-      function(callback) {
+      function (callback) {
         if (!UniversalFunctions.isEmpty(foundData)) {
           var minutes = UniversalFunctions.getRange(
             foundData.requestedAt,
@@ -916,7 +919,7 @@ var resetPassword = function(payloadData, callbackRoute) {
           return callback(ERROR.PASSWORD_CHANGE_REQUEST_INVALID);
         }
       },
-      function(callback) {
+      function (callback) {
         var dataToUpdate = {
           password: UniversalFunctions.CryptData(payloadData.password)
         };
@@ -925,7 +928,7 @@ var resetPassword = function(payloadData, callbackRoute) {
           { _id: customerId },
           dataToUpdate,
           {},
-          function(error, result) {
+          function (error, result) {
             if (error) {
               callback(error);
             } else {
@@ -938,7 +941,7 @@ var resetPassword = function(payloadData, callbackRoute) {
           }
         );
       },
-      function(callback) {
+      function (callback) {
         var dataToUpdate = {
           isChanged: true,
           changedAt: UniversalFunctions.getTimestamp()
@@ -953,7 +956,7 @@ var resetPassword = function(payloadData, callbackRoute) {
         );
       }
     ],
-    function(error) {
+    function (error) {
       if (error) {
         callbackRoute(error);
       } else {
