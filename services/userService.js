@@ -14,6 +14,10 @@ var updateUser = function(criteria, dataToSet, options, callback) {
 var createUser = function(objToSave, callback) {
   new Models.User(objToSave).save(callback);
 };
+
+var completeUserDetailsForRegisteration = function(objToSave,callback){
+  new Models.UserExtended(objToSave).save(callback);
+}
 //Delete User in DB
 var deleteUser = function(criteria, callback) {
   Models.User.findOneAndRemove(criteria, callback);
@@ -66,5 +70,6 @@ module.exports = {
   deleteUser: deleteUser,
   getUser: getUser,
   getAllGeneratedCodes: getAllGeneratedCodes,
-  getUserPromise: getUserPromise
+  getUserPromise: getUserPromise,
+  completeUserDetails : completeUserDetailsForRegisteration
 };

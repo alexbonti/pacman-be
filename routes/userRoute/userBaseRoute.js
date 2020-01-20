@@ -55,14 +55,14 @@ var userRegister = {
           .min(2)
           .required(),
         emailId: Joi.string().required(),
-        phoneNumber: Joi.string()
+        /*phoneNumber: Joi.string()
           .regex(/^[0-9]+$/)
           .min(5)
           .required(),
         countryCode: Joi.string()
           .max(4)
           .required()
-          .trim(),
+          .trim(),*/
         password: Joi.string()
           .required()
           .min(5)

@@ -14,6 +14,7 @@ var createUser = function (payloadData, callback) {
   var accessToken = null;
   var uniqueCode = null;
   var dataToSave = payloadData;
+  var additionalInfo = {};
   if (dataToSave.password)
     dataToSave.password = UniversalFunctions.CryptData(dataToSave.password);
   var customerData = null;
@@ -49,6 +50,8 @@ var createUser = function (payloadData, callback) {
           }
         });
       },
+
+      /*
       function (cb) {
         //Validate for facebookId and password
         if (!dataToSave.password) {
@@ -97,11 +100,11 @@ var createUser = function (payloadData, callback) {
             }
           }
         );
-      },
+      },*/
       function (cb) {
         //Insert Into DB
-        dataToSave.OTPCode = uniqueCode;
-        dataToSave.phoneNumber = payloadData.phoneNumber;
+      //  dataToSave.OTPCode = uniqueCode;
+      //  dataToSave.phoneNumber = payloadData.phoneNumber;
         dataToSave.registrationDate = new Date().toISOString();
         dataToSave.firstLogin = true;
         Service.UserService.createUser(dataToSave, function (
@@ -119,6 +122,24 @@ var createUser = function (payloadData, callback) {
             cb();
           }
         });
+      },
+      function(cb) {
+          additionalInfo.playerId = customerData._id;
+          additionalInfo.matchesPlayed = 0;
+          additionalInfo.matchesWon = 0;
+          additionalInfo.highestScore = 0;
+          additionalInfo.lastLogin = customerData.registrationDate;
+          additionalInfo.models = [];
+          additionalInfo.currentLevelScore = 0;
+
+          Service.UserService.completeUserDetails(additionalInfo, function(err,registerationResults){
+            if(err){
+               cb(err);
+            }else{
+              extendedUserInfo = registerationResults;
+              cb();
+            }
+          })
       },
       // function (cb) {
       //     //Send SMS to User
@@ -167,7 +188,7 @@ var createUser = function (payloadData, callback) {
       } else {
         callback(null, {
           accessToken: accessToken,
-          otpCode: customerData.OTPCode,
+         // otpCode: customerData.OTPCode,
           userDetails: UniversalFunctions.deleteUnnecessaryUserData(
             customerData
           ),
@@ -284,9 +305,9 @@ var loginUser = function (payloadData, callback) {
               UniversalFunctions.CryptData(payloadData.password)
             ) {
               cb(ERROR.INCORRECT_PASSWORD);
-            } else if (userFound.emailVerified == false) {
+            } /*else if (userFound.emailVerified == false) {
               cb(ERROR.NOT_REGISTERED);
-            } else {
+            } */else {
               successLogin = true;
               cb();
             }
@@ -318,10 +339,10 @@ var loginUser = function (payloadData, callback) {
         var projection = {
           password: 0,
           accessToken: 0,
-          initialPassword: 0,
-          OTPCode: 0,
-          code: 0,
-          codeUpdatedAt: 0
+        //  initialPassword: 0,
+        //  OTPCode: 0,
+        //  code: 0,
+        //  codeUpdatedAt: 0
         };
         var option = {
           lean: true
