@@ -348,7 +348,7 @@ var logoutCustomer = {
 };
 
 var getProfile = {
-  method: "GET",
+  method: "POST",
   path: "/api/user/getProfile",
   config: {
     description: "get profile of user",

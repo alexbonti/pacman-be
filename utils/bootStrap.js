@@ -70,7 +70,7 @@ function insertData(adminData, callbackParent) {
             else cb()
         }
     ],function(err,result){
-        if(err) return callbackParent(err)
+        if(err) return callbackParent(err);
         else {
             return callbackParent(null);
         }

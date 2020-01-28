@@ -591,6 +591,7 @@ var logoutCustomer = function (userData, callbackRoute) {
 
 var getProfile = function (userData, callback) {
   var customerData;
+  var customerAdditionalData;
   async.series(
     [
       function (cb) {
@@ -619,11 +620,38 @@ var getProfile = function (userData, callback) {
             }
           }
         });
+      },
+
+      function (cb) {
+        var query = {
+          playerId: userData._id
+        };
+        var projection = {
+          __v: 0,
+        //  password: 0,
+        //  accessToken: 0,
+        //  codeUpdatedAt: 0
+        };
+        var options = { lean: true };
+        Service.UserService.getUserInfo(query, projection, options, function (
+          err,
+          data
+        ) {
+          if (err) {
+            cb(err);
+          } else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              customerAdditionalData = (data && data[0]) || null;
+              cb();
+            }
+          }
+        });
       }
     ],
     function (err, result) {
       if (err) callback(err);
-      else callback(null, { customerData: customerData });
+      else callback(null, { customerData: customerData, customerAdditionalData: customerAdditionalData });
     }
   );
 };

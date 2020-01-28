@@ -15,9 +15,16 @@ var createUser = function(objToSave, callback) {
   new Models.User(objToSave).save(callback);
 };
 
+//Add the extra information for the extended user model
 var completeUserDetailsForRegisteration = function(objToSave,callback){
   new Models.UserExtended(objToSave).save(callback);
 }
+
+//Get the details from the extended model
+var getUserInfo = function(criteria, projection, options, callback) {
+  options.lean = true;
+  Models.UserExtended.find(criteria, projection, options, callback);
+};
 //Delete User in DB
 var deleteUser = function(criteria, callback) {
   Models.User.findOneAndRemove(criteria, callback);
@@ -69,6 +76,7 @@ module.exports = {
   createUser: createUser,
   deleteUser: deleteUser,
   getUser: getUser,
+  getUserInfo: getUserInfo,
   getAllGeneratedCodes: getAllGeneratedCodes,
   getUserPromise: getUserPromise,
   completeUserDetails : completeUserDetailsForRegisteration
