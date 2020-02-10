@@ -10,6 +10,12 @@ var updateUser = function(criteria, dataToSet, options, callback) {
   options.new = true;
   Models.User.findOneAndUpdate(criteria, dataToSet, options, callback);
 };
+
+var updateUserAdditionalInfo = function(criteria, dataToSet, options, callback) {
+  options.lean = true;
+  options.new = true;
+  Models.UserExtended.findOneAndUpdate(criteria, dataToSet, options, callback);
+};
 //Insert User in DB
 var createUser = function(objToSave, callback) {
   new Models.User(objToSave).save(callback);
@@ -73,6 +79,7 @@ var getAllGeneratedCodes = function(callback) {
 
 module.exports = {
   updateUser: updateUser,
+  updateUserAdditionalInfo: updateUserAdditionalInfo,
   createUser: createUser,
   deleteUser: deleteUser,
   getUser: getUser,

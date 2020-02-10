@@ -178,6 +178,8 @@ var login = {
   }
 };
 
+
+
 var resendOTP = {
   method: "PUT",
   path: "/api/user/resendOTP",
@@ -401,6 +403,120 @@ var getProfile = {
   }
 };
 
+
+//To Start the Game
+var startGame = {
+  method: "POST",
+  path: "/api/user/startGame",
+  config: {
+    description: "to start the game",
+    auth: "UserAuth",
+    tags: ["api", "user"],
+    handler: function(request, h) {
+      var userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+      var fileUrl = request.payload.fileUrl;
+      userData.fileUrl = fileUrl;
+      return new Promise((resolve, reject) => {
+        if (userData && userData._id) {
+          Controller.BattleBaseController.startGame(userData, function(
+            error,
+            success
+          ) {
+            if (error) {
+              reject(UniversalFunctions.sendError(error));
+            } else {
+              resolve(
+                UniversalFunctions.sendSuccess(
+                  UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.SUCCESS
+                    .DEFAULT,
+                  success
+                )
+              );
+            }
+          });
+        } else {
+          reject(
+            UniversalFunctions.sendError(
+              UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR
+                .INVALID_TOKEN
+            )
+          );
+        }
+      });
+    },
+    validate: {
+      headers: UniversalFunctions.authorizationHeaderObj,
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
+//To Update the Profile
+var updateProfile = {
+  method: "POST",
+  path: "/api/user/updateProfile",
+  config: {
+    description: "Update Profile of User",
+    auth: "UserAuth",
+    tags: ["api", "user"],
+    handler: function(request, h) {
+      var userData =
+        (request.auth &&
+          request.auth.credentials &&
+          request.auth.credentials.userData) ||
+        null;
+        userData.fileUrl = request.payload.fileUrl;
+      return new Promise((resolve, reject) => {
+        if (userData && userData._id) {
+          Controller.UserBaseController.updateUserProfile(userData, function(
+            error,
+            success
+          ) {
+            if (error) {
+              reject(UniversalFunctions.sendError(error));
+            } else {
+              resolve(
+                UniversalFunctions.sendSuccess(
+                  UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.SUCCESS
+                    .DEFAULT,
+                  success
+                )
+              );
+            }
+          });
+        } else {
+          reject(
+            UniversalFunctions.sendError(
+              UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR
+                .INVALID_TOKEN
+            )
+          );
+        }
+      });
+    },
+    validate: {
+      headers: UniversalFunctions.authorizationHeaderObj,
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
 var changePassword = {
   method: "PUT",
   path: "/api/user/changePassword",
@@ -561,7 +677,9 @@ var resetPassword = {
 
 var UserBaseRoute = [
   userRegister,
+  updateProfile,
   verifyOTP,
+  startGame,
   login,
   resendOTP,
   getOTP,

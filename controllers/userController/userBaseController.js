@@ -265,6 +265,66 @@ var verifyOTP = function (userData, payloadData, callback) {
   );
 };
 
+//Update User
+var updateUserProfile = function (userData, callback) {
+  var customerData;
+  var userId = userData._id;
+  async.series(
+    [
+      function (cb) {
+        var query = {
+          playerId: userData._id
+        };
+        var projection = {
+          __v: 0
+        };
+        var options = { lean: true };
+        Service.UserService.getUserInfo(query, projection, options, function (
+          err,
+          data
+        ) {
+          if (err) {
+            cb(err);
+          } else {
+            if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
+            else {
+              customerData = (data && data[0]) || null;
+              cb();
+            }
+          }
+        });
+      },
+
+      function (cb) {
+        var query = {
+          playerId: userData._id
+        };
+        var options = { lean: true };
+        dataToUpdate = { $push: { models: userData.fileUrl } };
+        Service.UserService.updateUserAdditionalInfo(query, dataToUpdate ,  {useFindAndModify: false} , function (
+          err,
+          data
+        ) {
+          if (err) {
+            cb(err);
+          } else {
+              cb();
+            
+          }
+        });
+      }
+    ],
+    function (err, result) {
+      if (err) callback(err);
+      else callback(null, { userId: userId });
+    }
+  );
+};
+
+
+
+
+//Login User
 var loginUser = function (payloadData, callback) {
   var userFound = false;
   var accessToken = null;
@@ -1021,6 +1081,7 @@ module.exports = {
   loginUser: loginUser,
   resendOTP: resendOTP,
   getOTP: getOTP,
+  updateUserProfile : updateUserProfile,
   accessTokenLogin: accessTokenLogin,
   logoutCustomer: logoutCustomer,
   getProfile: getProfile,
