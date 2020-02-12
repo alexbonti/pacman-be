@@ -17,14 +17,14 @@ var deleteBattle = function(criteria, callback) {
 };
 
 //Get DEtails  from DB
-var getBattle = function(criteria, projection, options, callback) {
+var findOpponent = function(criteria, projection, options, callback) {
   options.lean = true;
   Models.Battle.find(criteria, projection, options, callback);
 };
 
 module.exports = {
   createBattle: createBattle,
-  getBattle: getBattle,
+  findOpponent: findOpponent,
   updateBattle: updateBattle,
   deleteBattle: deleteBattle
 };

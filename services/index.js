@@ -4,5 +4,6 @@
 module.exports = {
   UserService: require("./userService"),
   ForgetPasswordService: require("./forgetPasswordService"),
-  AdminService: require("./adminService")
+  AdminService: require("./adminService"),
+  BattleService: require("./battleService")
 };
