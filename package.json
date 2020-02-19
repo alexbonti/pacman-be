@@ -8,7 +8,7 @@
     "node": "10.*"
   },
   "scripts": {
-    "start": "node entry.js"
+    "start": "nodemon entry.js"
   },
   "repository": {
     "type": "git",

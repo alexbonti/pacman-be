@@ -6,6 +6,8 @@ var updateBattle = function(criteria, dataToSet, options, callback) {
   Models.Battle.findOneAndUpdate(criteria, dataToSet, options, callback);
 };
 
+
+
 //Insert Battle Details into the DB
 var createBattle = function(objToSave, callback) {
   new Models.Battle(objToSave).save(callback);
@@ -17,14 +19,13 @@ var deleteBattle = function(criteria, callback) {
 };
 
 //Get DEtails  from DB
-var findOpponent = function(criteria, projection, options, callback) {
-  options.lean = true;
+var findPlayer = function(criteria, projection, options, callback) {
   Models.Battle.find(criteria, projection, options, callback);
 };
 
 module.exports = {
   createBattle: createBattle,
-  findOpponent: findOpponent,
+  findPlayer: findPlayer,
   updateBattle: updateBattle,
   deleteBattle: deleteBattle
 };
