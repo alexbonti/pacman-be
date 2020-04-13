@@ -44,6 +44,8 @@
     "moment-range": "4.0.2",
     "mongoose": "5.8.0",
     "node-cron": "^2.0.3",
+    "nodemailer": "^6.4.2",
+    "nodemailer-smtp-transport": "^2.7.4",
     "randomstring": "1.1.5",
     "socket.io": "2.2.0",
     "underscore": "1.9.1",

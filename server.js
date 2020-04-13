@@ -12,11 +12,16 @@ var Plugins = require("./plugins");
 var SocketManager = require("./lib/socketManager");
 var Routes = require("./routes");
 var MongoConnect = require('./mongoConnect')
-var BootStrap = require('./utils/bootStrap')
+var BootStrap = require('./utils/bootStrap');
+
+//CRON Implementation related Dependencies
 var cron = require('node-cron');
 var async = require("async");
 var Service = require("./services");
 var mongoose = require('mongoose');
+var nodemailer = require("nodemailer");
+var smtpTransport = require("nodemailer-smtp-transport");
+
 
 const init = async () => {
   //Create Server
