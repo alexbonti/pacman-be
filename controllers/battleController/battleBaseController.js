@@ -39,15 +39,53 @@ var startGame = function (userData, callback) {
 
   };
 
-  beginBattle = (user1, user2) => {
-     let result = Math.round(Math.random() * 10);
-     if(result % 2 == 0) {
-       console.log("User 1 is the Winner");
-     }else{
-       console.log("User 2 is the Winner");
-     }
+  var beginBattle = function (u1id, u1file, u2id, u2file)  {
+
+
+  
+     /* Using Child Spawn function */
+     var spawn = require("child_process").spawn; 
+     // var process = await spawn('python',["-u","./capture.py","--red","baselineTeam","--blue","myTeam"]); 
+   
+     var process =  spawn('python',["-u",'./capture.py']); 
+   
+     let res1;
+   
+     process.stdout.on('data', async(data) =>{ 
+    // res.send(data.toString());
+    let result = data.toString();
+    res1 = result.split(" ");
+    console.log(res1);
+   
+   //  let point = res1[23];
+   
+   //  var resultOverview = new Result({
+   //    opponent: res1[7],
+   //    winner : res1[19],
+   //    points: res1[23]
+   //  });
+   
+   //  try{
+   //    await resultOverview.save();
+   //  }
+   //  catch(err){
+   //    console.log("Error in saving the results onto the Database")
+   //  }
+   
+   //  battleResult={
+      
+   //  }
+    if(res1[19] == "Red"){
+      return res.status(200).json({msg:"You won by "+point+" points"});     
+    }
+    if(res1[19] == "Blue"){
+      return res.status(200).json({msg:"You lost by "+point+" points"});
+    }
+    });
+     
   }
 
   module.exports = {
-      startGame : startGame
+      startGame : startGame,
+      beginBattle: beginBattle
   }

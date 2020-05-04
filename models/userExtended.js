@@ -9,6 +9,7 @@ var userExtended = new Schema({
     matchesPlayed : {type: Number, default: 0, trim: true},
     matchesWon : {type: Number, default: 0, trim: true},
     highestScore : {type: Number, default: 0, trim: true },
+    waiting : {type: Boolean, default: false, trim: true},
     lastLogin : {type: Date, default: Date.now},
     models : [{}],
     currentLevelScore : {type: Number, default: 0, trim: true}

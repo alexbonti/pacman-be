@@ -19,8 +19,11 @@ var cron = require('node-cron');
 var async = require("async");
 var Service = require("./services");
 var mongoose = require('mongoose');
+var Controller = require("./controllers");
 var nodemailer = require("nodemailer");
 var smtpTransport = require("nodemailer-smtp-transport");
+// const AWS = require('aws-sdk');
+// const fs = require('fs');
 
 
 const init = async () => {
@@ -86,7 +89,7 @@ const init = async () => {
   }*/
 
   //CRON 
-  cron.schedule("* * * * *", (callback) => {
+  cron.schedule("*/3 * * * *", (callback) => {
     let player;
     let opponent;
     let result;
@@ -154,192 +157,9 @@ const init = async () => {
             }
 
           })
-        },
-
-        function (cb) {
-          result = beginBattle();
-          console.log(result);
-
-          if(player === null || opponent === null)
-          {
-            cb();
-          }
-
-          else{
-
-          if (result == 1) {
-            winner = player;
-            loser = opponent;
-            cb();
-          } else {
-            winner = opponent;
-            loser = player;
-            cb();
-          }
-          }
-          
-        },
-
-        function (cb) {
-
-          if(player == null || opponent == null)
-          {
-            cb();
-          }
-          else{
-
-          Service.UserService.getUserInfo({ playerId: winner.uid }, {}, {}, function (err, data) {
-            if (err) {
-              console.log("Error in fetching the Details of the WIinner");
-            }
-            else {
-              winnerDetails = data && data[0] || null;
-              console.log("Winner Details" + winnerDetails);
-              cb();
-            }
-          })
-        }
-        },
-
-        //Update Details Accordingly for the WInner
-        function (cb) {
-
-          if(player == null || opponent == null)
-          {
-            cb();
-          }
-          else{
-
-          let matchesPlayed = winnerDetails.matchesPlayed;
-          matchesPlayed++;
-          let matchesWon = winnerDetails.matchesWon;
-          matchesWon++;
-          let dataToSetForWinner = {
-            matchesPlayed,
-            matchesWon
-          }
-
-          var query = {
-            playerId: winner.uid
-          };
-          var options = { lean: true };
-          Service.UserService.updateUserAdditionalInfo(query, dataToSetForWinner, { useFindAndModify: false }, function (
-            err,
-            data
-          ) {
-            if (err) {
-              cb(err);
-            } else {
-              console.log("Data Modified for the WInner Succesfully");
-              cb();
-            }
-          });
         }
 
-        },
 
-        //Fetch the Loser Details
-        function (cb) {
-
-          if(player == null || opponent == null)
-          {
-            cb();
-          }
-          else{
-
-          Service.UserService.getUserInfo({ playerId: loser.uid }, {}, {}, function (err, data) {
-            if (err) {
-              console.log("Error in fetching the Details of the Loser");
-            }
-            else {
-              loserDetails = data && data[0] || null;
-              cb();
-            }
-          })
-        }
-        },
-
-        //Update Details Accordingly for the Loser Accordingly
-        function (cb) {
-
-
-          if(player == null || opponent == null)
-          {
-            cb();
-          }
-          else{
-
-          let matchesPlayed = loserDetails.matchesPlayed;
-          matchesPlayed++;
-          let dataToSetForLoser = {
-            matchesPlayed,
-          }
-
-          var query = {
-            playerId: loser.uid
-          };
-          var options = { lean: true };
-          Service.UserService.updateUserAdditionalInfo(query, dataToSetForLoser, { useFindAndModify: false }, function (
-            err,
-            data
-          ) {
-            if (err) {
-              cb(err);
-            } else {
-              console.log("Data Modified for the Loser Succesfully");
-              cb();
-            }
-          });
-
-        }
-        },
-
-        //Now Delete the WInner Record from Battle Collection
-        function (cb) {
-
-          if(player == null || opponent == null)
-          {
-            cb();
-          }
-          else{
-
-          Service.BattleService.deleteBattle({ _id : winner._id }, function (err, data) {
-            if (err) {
-              console.log("Error in fexecuting the Delete Operation");
-            }
-            else {
-              console.log("Winner Record Deleted Successfully");
-              winner = null;
-              winnerDetails = null;
-              player = null;
-              opponent = null;
-              cb();
-            }
-          })
-        }
-        },
-
-        //Delete the record for the Loser from the Battle Collection
-        function (cb) {
-
-          if(player == null || opponent == null)
-          {
-            cb();
-          }
-           else{
-          Service.BattleService.deleteBattle({ _id : loser._id }, function (err, data) {
-            if (err) {
-              console.log("Error in Deleting the Loser Details");
-            }
-            else {
-              console.log("Loser Record Deleted Succesfully");
-              loser = null;
-              loserDetails = null;
-              cb();
-            }
-          })
-        }
-        }
       ],
 
       function (err, result) {
@@ -348,7 +168,17 @@ const init = async () => {
           console.log(err);
         } else {
           //  callback();
-          console.log("Operation Completed Successfully!!!!!!");
+          if(player === null || opponent === null)
+          {
+            console.log("No Match Found yet!!");
+          }
+          else{
+            console.log("Successfully matched!!!!!!");
+            // Controller.BattleBaseController.beginBattle(player.uid,player.fileUrl,opponent.uid,opponent.fileUrl);
+          
+            beginbattle(player.fileUrl,opponent.fileUrl);
+          }
+          
         }
       }
     );
@@ -356,19 +186,63 @@ const init = async () => {
 
   });
 
-  const beginBattle = () => {
-    let result = Math.round(Math.random() * 10);
-
-    if (result % 2 == 0) {
-      return 1;
-    }
-
-    else {
-      return 2;
-    }
-
-    return 1;
+  const beginbattle =  (player1rurl,player2url) => {
+   
+    var spawn = require("child_process").spawn; 
+    console.log("Files received Player 1: "+player1rurl+"\r\n");
+    console.log("Files received Player 2: "+player2url);
+    // var process = await spawn('python',["-u","./capture.py","--red","baselineTeam","--blue","myTeam"]); 
+  
+    // var process = spawn('python',['./capture.py',"--red","baselineTeam","--blue","myTeam"]); 
+ 
+    // var process = spawn('python',['./capture.py',"--red="+player1rurl,"--blue="+player2url]); 
+ 
+ 
+    var process = spawn('python',['./capture.py']); 
+ 
+ 
+    let res1;
+  
+    process.stdout.on('data', async(data) =>{ 
+   // res.send(data.toString());
+   let result = data.toString();
+   res1 = result.split(" ");
+   console.log(res1[10]);
+  
+   let point = res1[23];
+  
+  //  var resultOverview = new Result({
+  //    opponent: res1[7],
+  //    winner : res1[19],
+  //    points: res1[23]
+  //  });
+  
+  //  try{
+  //    await resultOverview.save();
+  //  }
+  //  catch(err){
+  //    console.log("Error in saving the results onto the Database")
+  //  }
+  
+  //  battleResult={
+     
+  //  }
+   if(res1[19] == "Red"){
+       console.log("Red is the winners");
   }
+   if(res1[19] == "Blue"){
+    console.log("Blue is the winners");
+   }
+   });
+
+
+   process.stderr.on('data',(data)=>{
+     console.log("Error Section Here"+data);
+   });
+   
+
+  };
+  
 
   // Start Server
   await server.start();

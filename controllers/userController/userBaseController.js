@@ -128,6 +128,7 @@ var createUser = function (payloadData, callback) {
           additionalInfo.matchesPlayed = 0;
           additionalInfo.matchesWon = 0;
           additionalInfo.highestScore = 0;
+          additionalInfo.waiting =false;
           additionalInfo.lastLogin = customerData.registrationDate;
           additionalInfo.models = [];
           additionalInfo.currentLevelScore = 0;

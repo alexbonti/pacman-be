@@ -1,7 +1,3 @@
-/**
- * Created by Navit
- */
-
  'use strict';
 
 var mongo = {

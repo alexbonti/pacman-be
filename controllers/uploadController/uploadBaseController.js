@@ -1,8 +1,4 @@
 /**
- * Created by Navit
- */
-
-/**
  * Please use appLogger for logging in this file try to abstain from console
  * levels of logging:
  * - TRACE - ‘blue’
