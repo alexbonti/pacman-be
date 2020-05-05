@@ -765,12 +765,12 @@ def readCommand( argv ):
   """
   parser = OptionParser(usageStr)
 
-  link = "https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/Docs_wOKwe6VbvRUS.py"
-  f = urllib.urlopen(link)
-  myfile = f.read()
+  # link = "https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/Docs_wOKwe6VbvRUS.py"
+  # f = urllib.urlopen(link)
+  # myfile = f.read()
 
   parser.add_option('-r', '--red', help=default('Red team'),
-                    default= 'myfile')
+                    default= 'myTeam')
   parser.add_option('-b', '--blue', help=default('Blue team'),
                     default='baselineTeam')
   parser.add_option('--red-name', help=default('Red team name'),
@@ -918,11 +918,12 @@ def loadAgents(isRed, factory, textgraphics, cmdLineArgs):
     if not factory.endswith(".py"):
       factory += ".py"
 
-    link = "https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/Docs_wOKwe6VbvRUS.py"
-    f = urllib.urlopen(link)
-    myfile = eval(f.read())
+    # link = "https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/Docs_wOKwe6VbvRUS.py"
+    # f = urllib.urlopen(link)
+    # myfile = eval(f.read())
 
-    module = imp.load_source('player' + str(int(isRed)), 'https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/',myfile);
+    # module = imp.load_source('player' + str(int(isRed)), 'https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/',myfile);
+    module = imp.load_source('player' + str(int(isRed)),factory)
   except (NameError, ImportError):
     print >>sys.stderr, 'Error: The team "' + factory + '" could not be loaded! '
     traceback.print_exc()
