@@ -3,15 +3,15 @@ const Schema=mongoose.Schema;
 
 const LeaderBoardSchema= new Schema({
     player1:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required:true
     },
     player2:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required:true
     },
     winner:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required:true
     }
 })

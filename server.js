@@ -352,6 +352,22 @@ const init = async () => {
              });
 
           },
+
+          function (cb){
+            let battleDetails = {
+              player1: player1id,
+              player2: player2id,
+              winner: winner
+            };
+  
+            Service.LeaderBoardService.addIntoLeaderBoard(battleDetails, function(err,data){
+              if(err){
+                 cb(err);
+              }else{
+                cb();
+              }
+            })
+          },
   
           //Now Delete the Winner Record from Battle Collection
           function (cb) {
@@ -426,6 +442,8 @@ const init = async () => {
           });
          
           }
+
+         
   
       ],
       function (err, user) {
@@ -434,10 +452,12 @@ const init = async () => {
             console.log("Game Logic Done");
           }
         else {
+          console.log(err);
           console.log("Error in Operations");
         }
       }
     );
+
 
     //Previous Logic Code
    

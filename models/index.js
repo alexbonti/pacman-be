@@ -7,5 +7,6 @@ module.exports = {
     ForgetPassword:require('./forgotPasswordRequest'),
     Admin: require('./admin'),
     UserExtended:require('./userExtended'),
-    Battle:require('./battle')
+    Battle:require('./battle'),
+    LeaderBoard: require('./leaderboard')
 };
