@@ -8,4 +8,6 @@ var battle = new Schema({
      matched: {type: Boolean}
 });
 
+
+
 module.exports = mongoose.model('battle',battle);

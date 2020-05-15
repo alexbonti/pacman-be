@@ -114,8 +114,8 @@ const init = async () => {
                 console.log(player);
                 cb();
               } else {
-                player = null;
                 console.log("No More Players Found Waiting");
+                player = null;
                 cb();
               }
 
@@ -131,6 +131,8 @@ const init = async () => {
           if(player === null){
             cb();
           }
+
+          else{
 
           Service.BattleService.findPlayer({ _id: { $ne: player._id } }, {}, { limit: 1 }, function (
             err,
@@ -151,7 +153,7 @@ const init = async () => {
                 cb();
               }
 
-
+            
               //cb();
               console.log("Operation 2 Done");
               
@@ -159,6 +161,8 @@ const init = async () => {
             }
 
           })
+
+          }
         }
 
 
@@ -242,11 +246,17 @@ const init = async () => {
              winnerMargin = res1[23];
              cb();
             }
-            if(res1[19] == "Blue"){
+            else if(res1[19] == "Blue"){
              winner = player2id;
              loser = player1id;
              winnerMargin = Math.abs(parseInt(res1[23]));
              cb();
+            }
+            else{
+              winner = player1id;
+              loser = player2id;
+              winnerMargin = 0;
+              cb();
             }
          });
       
@@ -280,7 +290,11 @@ const init = async () => {
              let matchesPlayed = winnerDetails.matchesPlayed;
              matchesPlayed++;
              let matchesWon = winnerDetails.matchesWon;
-             matchesWon++;
+             
+             if(winnerMargin>0){
+              matchesWon++;
+             }
+             
              let highestScore = parseInt(winnerDetails.highestScore);
              if(winnerMargin>highestScore){
                highestScore = winnerMargin;
@@ -354,7 +368,7 @@ const init = async () => {
           },
 
           function (cb){
-            let battleDetails = {
+            let battleDetails =  {
               player1: player1id,
               player2: player2id,
               winner: winner
@@ -364,6 +378,7 @@ const init = async () => {
               if(err){
                  cb(err);
               }else{
+                console.log("Added into the Leaderboard");
                 cb();
               }
             })

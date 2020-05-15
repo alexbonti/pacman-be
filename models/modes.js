@@ -34,4 +34,5 @@ var modes = new Schema({
  // isBlocked: {type: Boolean, default: false, required: true}
 });
 
+
 module.exports = mongoose.model("user", user);

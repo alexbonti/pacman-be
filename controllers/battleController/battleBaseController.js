@@ -39,6 +39,40 @@ var startGame = function (userData, callback) {
 
   };
 
+
+
+  //Get leaderboard
+  var getLeaderBoard = function (callback) {
+    var battleResults;
+    async.series(
+      [
+        function (cb) {
+          var query = {};
+          var projection = {};
+          var options = { lean: true };
+          Service.LeaderBoardService.fetchBattleResults(query, projection, options, function (
+            err,
+            data
+          ) {
+            if (err) {
+              cb(err);
+            } 
+              else {
+                battleResults = (data && data[0]) || null;
+                cb();
+              }
+            
+          });
+        }
+      ],
+      function (err, result) {
+        if (err) callback(err);
+        else callback(null, { battleResults : battleResults });
+      }
+    );
+  };
+
+  //Begin Battle
   var beginBattle = function (u1id, u1file, u2id, u2file)  {
 
 
@@ -87,5 +121,6 @@ var startGame = function (userData, callback) {
 
   module.exports = {
       startGame : startGame,
-      beginBattle: beginBattle
+      beginBattle: beginBattle,
+      getLeaderBoard: getLeaderBoard
   }

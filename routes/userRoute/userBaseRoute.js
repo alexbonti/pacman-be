@@ -404,6 +404,42 @@ var getProfile = {
 };
 
 
+//To get the LeaderBoard
+var getLeaderBoard = {
+  method: "GET",
+  path: "/api/user/getLeaderBoard",
+  handler: function(request, h) {
+        return new Promise((resolve, reject) => {
+        Controller.BattleBaseController.getLeaderBoard(function(
+          err,
+          data
+        ) {
+          if (err) {
+            reject(UniversalFunctions.sendError(err));
+          } else {
+            resolve(UniversalFunctions.sendSuccess(null, data));
+          }
+        });
+      });
+    
+  },
+  config: {
+    description: "Get LeaderBoard that corresponds to battle results",
+    tags: ["api", "user"],
+    validate: {
+      failAction: UniversalFunctions.failActionFunction
+    },
+    plugins: {
+      "hapi-swagger": {
+        responseMessages:
+          UniversalFunctions.CONFIG.APP_CONSTANTS.swaggerDefaultResponseMessages
+      }
+    }
+  }
+};
+
+
+
 //To Start the Game
 var startGame = {
   method: "POST",
@@ -688,6 +724,7 @@ var UserBaseRoute = [
   getProfile,
   changePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  getLeaderBoard
 ];
 module.exports = UserBaseRoute;
