@@ -90,7 +90,7 @@ const init = async () => {
   }*/
 
   //CRON 
-  cron.schedule("*/3 * * * *", (callback) => {
+  cron.schedule("*/4 * * * *", (callback) => {
     let player;
     let opponent;
     let result;
@@ -182,7 +182,7 @@ const init = async () => {
             console.log("Successfully matched!!!!!!");
             // Controller.BattleBaseController.beginBattle(player.uid,player.fileUrl,opponent.uid,opponent.fileUrl);
           
-            beginbattle(player.fileUrl,player.uid,opponent.fileUrl,opponent.uid);
+            beginbattle(player.fileUrl,player.uid,player.username,opponent.fileUrl,opponent.uid,opponent.username);
           }
           
         }
@@ -192,7 +192,7 @@ const init = async () => {
 
   });
 
-  const beginbattle =  (player1url,player1id,player2url,player2id) => {
+  const beginbattle =  (player1url,player1id,player1name,player2url,player2id,player2name) => {
    
     var spawn = require("child_process").spawn; 
     console.log("Files received Player 1: "+player1url+"\r\n");
@@ -204,6 +204,8 @@ const init = async () => {
 
     let winner;
     let loser;
+    let winnerName;
+    let loserName;
     let winnerDetails;
     let loserDetails;
     let winnerMargin=0;
@@ -243,12 +245,16 @@ const init = async () => {
            if(res1[19] == "Red"){
              winner = player1id;
              loser = player2id;
+             winnerName = player1name;
+             loserName = player2name;
              winnerMargin = res1[23];
              cb();
             }
             else if(res1[19] == "Blue"){
              winner = player2id;
              loser = player1id;
+             winnerName = player2name;
+             loserName = player1name;
              winnerMargin = Math.abs(parseInt(res1[23]));
              cb();
             }
@@ -369,9 +375,9 @@ const init = async () => {
 
           function (cb){
             let battleDetails =  {
-              player1: player1id,
-              player2: player2id,
-              winner: winner
+              winner: winnerName,
+              loser: loserName,
+              margin: winnerMargin
             };
   
             Service.LeaderBoardService.addIntoLeaderBoard(battleDetails, function(err,data){

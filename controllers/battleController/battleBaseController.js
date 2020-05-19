@@ -10,11 +10,39 @@ var _ = require("underscore");
 
 //start Game
 var startGame = function (userData, callback) {
+    let userAdditionalInfo = '';
+    let fIndex = '';
     async.series(
       [
         function (cb) {
-          fUrl = userData.fileUrl;
-          dataToSave = {uid: userData._id, fileUrl : userData.fileUrl, matched: false };
+          fIndex = parseInt(userData.fileUrlIndex);
+
+          var query = {
+            playerId: userData._id
+          };
+          var projection = {
+            __v: 0
+          };
+          var options = { lean: true };
+          
+          Service.UserService.getUserInfo(query, projection, options, function (
+            err,
+            data
+          ) {
+            if (err) {
+              cb(err);
+            } else {
+                userAdditionalInfo = (data && data[0]) || null;
+                console.log("Additional Information fetched complete and correctly for the user");
+                cb();
+              
+            }
+          });
+        },
+        function (cb) {
+          fUrl = userAdditionalInfo.models[fIndex];
+         
+          dataToSave = {uid: userData._id, fileUrl : fUrl, matched: false, username: userData.firstName };
           
           Service.BattleService.createBattle(dataToSave, function (
             err,
@@ -31,7 +59,10 @@ var startGame = function (userData, callback) {
         }
       ],
       function (err, result) {
-        if (err) callback(err);
+        if (err) {
+          callback(err);
+          console.log(err+"in the backend for the required model selection");
+        }
         else callback(null, { "msg": 1 });
       }
     );
@@ -48,7 +79,7 @@ var startGame = function (userData, callback) {
       [
         function (cb) {
           var query = {};
-          var projection = {};
+          var projection = {  __v: 0, _id: 0};
           var options = { lean: true };
           Service.LeaderBoardService.fetchBattleResults(query, projection, options, function (
             err,
@@ -58,7 +89,7 @@ var startGame = function (userData, callback) {
               cb(err);
             } 
               else {
-                battleResults = (data && data[0]) || null;
+                battleResults = (data ) || null;
                 cb();
               }
             

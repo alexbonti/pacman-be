@@ -313,10 +313,32 @@ var updateUserProfile = function (userData, callback) {
             
           }
         });
+      },
+
+      function (cb) {
+        var query = {
+          playerId: userData._id
+        };
+        var options = { lean: true };
+        dataToUpdate = { $push: { fileName: userData.fileName } };
+        Service.UserService.updateUserAdditionalInfo(query, dataToUpdate ,  {useFindAndModify: false} , function (
+          err,
+          data
+        ) {
+          if (err) {
+            cb(err);
+          } else {
+              cb();
+            
+          }
+        });
       }
     ],
     function (err, result) {
-      if (err) callback(err);
+      if (err) {
+        console.log(err);
+        callback(err);
+      }
       else callback(null, { userId: userId });
     }
   );

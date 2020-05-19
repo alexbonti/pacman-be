@@ -454,8 +454,8 @@ var startGame = {
           request.auth.credentials &&
           request.auth.credentials.userData) ||
         null;
-      var fileUrl = request.payload.fileUrl;
-      userData.fileUrl = fileUrl;
+      var fileUrlIndex = request.payload.fileUrl;
+      userData.fileUrlIndex = fileUrlIndex;
       return new Promise((resolve, reject) => {
         if (userData && userData._id) {
           Controller.BattleBaseController.startGame(userData, function(
@@ -512,6 +512,7 @@ var updateProfile = {
           request.auth.credentials.userData) ||
         null;
         userData.fileUrl = request.payload.fileUrl;
+        userData.fileName = request.payload.fileName;
       return new Promise((resolve, reject) => {
         if (userData && userData._id) {
           Controller.UserBaseController.updateUserProfile(userData, function(

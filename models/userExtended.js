@@ -12,6 +12,7 @@ var userExtended = new Schema({
     waiting : {type: Boolean, default: false, trim: true},
     lastLogin : {type: Date, default: Date.now},
     models : [{}],
+    fileName: [{}],
     currentLevelScore : {type: Number, default: 0, trim: true}
 });
 

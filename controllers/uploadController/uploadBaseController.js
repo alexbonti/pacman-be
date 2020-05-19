@@ -56,7 +56,7 @@ var uploadImage = function (payloadData, callback) {
 
 var uploadDocument = function (payloadData, callback) {
   var documentFileUrl;
-  var documentFile = payloadData.documentFile
+  var documentFile = payloadData.documentFile;
   if (payloadData.documentFile && payloadData.documentFile.filename) {
     documentFileUrl = {
       original: null
@@ -70,7 +70,8 @@ var uploadDocument = function (payloadData, callback) {
             cb(err)
           } else {
             documentFileUrl = {
-              original: uploadedInfo.profilePicture
+              original: uploadedInfo.profilePicture,
+              fileName : documentFile.hapi.filename
             }
             cb();
           }
@@ -82,7 +83,10 @@ var uploadDocument = function (payloadData, callback) {
     }
   ], function (err, result) {
     if (err) callback(err)
-    else callback(null, { documentFileUrl: documentFileUrl })
+    else {
+      console.log(documentFileUrl);
+      callback(null, { documentFileUrl: documentFileUrl })
+    }
   })
 }
 
