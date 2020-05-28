@@ -90,9 +90,10 @@ const init = async () => {
   }*/
 
   //CRON 
-  cron.schedule("*/4 * * * *", (callback) => {
+  cron.schedule("*/1 * * * *", (callback) => {
     let player;
     let opponent;
+    let matchDone = false;
     let result;
     let winner, winnerDetails;
     let loser, loserDetails;
@@ -101,7 +102,11 @@ const init = async () => {
       [
         function (cb) {
 
-          Service.BattleService.findPlayer({}, {}, { limit: 1 }, function (
+          let criteria ={
+            matched : false
+          }
+
+          Service.BattleService.findPlayer(criteria, {}, { limit: 1 }, function (
             err,
             data
           ) {
@@ -134,7 +139,7 @@ const init = async () => {
 
           else{
 
-          Service.BattleService.findPlayer({ _id: { $ne: player._id } }, {}, { limit: 1 }, function (
+          Service.BattleService.findPlayer({ _id: { $ne: player._id } , matched : false }, {}, { limit: 1 }, function (
             err,
             data
           ) {
@@ -146,6 +151,7 @@ const init = async () => {
               if (opponent) {
                 console.log(opponent);
                 console.log("Opponent Section Here");
+                matchDone = true;
                 cb();
               } else {
                 opponent = null;
@@ -163,9 +169,78 @@ const init = async () => {
           })
 
           }
+        },
+
+        function (cb) {
+
+          if(player === null || opponent === null){
+            cb();
+          }
+
+          else{
+
+            let matched = true;
+            let dataToSet = {
+              matched
+            }
+ 
+           var query = {
+             _id: player._id
+            };
+            var options = { lean: true };
+            Service.BattleService.updateBattle(query, dataToSet, { useFindAndModify: false }, function (
+              err,
+            data
+          ) {
+            if (err) {
+              cb(err);
+              console.log(err);
+            } else {
+                cb();
+              }
+             
+            }
+
+          )
+
+          }
+        },
+
+        function (cb) {
+
+          if(player === null || opponent === null){
+            cb();
+          }
+
+          else{
+
+            let matched = true;
+            let dataToSet = {
+              matched
+            }
+ 
+           var query = {
+             _id: opponent._id
+            };
+            var options = { lean: true };
+            Service.BattleService.updateBattle(query, dataToSet, { useFindAndModify: false }, function (
+              err,
+            data
+          ) {
+            if (err) {
+              cb(err);
+              console.log(err);
+            } else {
+                cb();
+              }
+             
+            }
+
+          )
+
+          }
         }
-
-
+   
       ],
 
       function (err, result) {
@@ -179,11 +254,15 @@ const init = async () => {
             console.log("No Match Found yet!!");
           }
           else{
+
+
             console.log("Successfully matched!!!!!!");
             // Controller.BattleBaseController.beginBattle(player.uid,player.fileUrl,opponent.uid,opponent.fileUrl);
           
             beginbattle(player.fileUrl,player.uid,player.username,opponent.fileUrl,opponent.uid,opponent.username);
-          }
+            }
+            
+          
           
         }
       }
@@ -261,6 +340,7 @@ const init = async () => {
             else{
               winner = player1id;
               loser = player2id;
+              winnerName = 'Draw';
               winnerMargin = 0;
               cb();
             }
@@ -375,9 +455,10 @@ const init = async () => {
 
           function (cb){
             let battleDetails =  {
-              winner: winnerName,
-              loser: loserName,
-              margin: winnerMargin
+              Player1: player1name,
+              Player2: player2name,
+              Winner: winnerName,
+              Margin: winnerMargin
             };
   
             Service.LeaderBoardService.addIntoLeaderBoard(battleDetails, function(err,data){
