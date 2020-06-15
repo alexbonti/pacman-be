@@ -35,6 +35,14 @@ const init = async () => {
     routes: { cors: true }
   });
 
+  server.route({
+    config: {
+        cors: {
+            origin: ['*'],
+            additionalHeaders: ['cache-control', 'x-requested-with']
+        }
+    }});
+
   //Register All Plugins
   await server.register(Plugins, {}, err => {
     if (err) {
