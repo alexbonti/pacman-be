@@ -1,7 +1,3 @@
-/**
- * Created by Navit
- */
-
 'use strict';
 var Mongoose = require('mongoose');
 var CONFIG = require('./config');

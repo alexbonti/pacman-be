@@ -1,6 +1,4 @@
-/**
- * Created by Navit
- */
+
 
 "use strict";
 //External Dependencies
@@ -90,7 +88,7 @@ const init = async () => {
   }*/
 
   //CRON 
-  cron.schedule("*/1 * * * *", (callback) => {
+  cron.schedule("*/5 * * * * *", (callback) => {
     let player;
     let opponent;
     let matchDone = false;
@@ -561,68 +559,7 @@ const init = async () => {
     );
 
 
-    //Previous Logic Code
-   
-   
-    // UploadManager.getItem(user1file,player1id,function(err,data){
-    //     console.log(err);
-    // });
-
-    // UploadManager.getItem(user2file,player2id,function(err,data){
-    //     console.log(err);
-    // });
-
-
-   
-    // var process = await spawn('python',["-u","./capture.py","--red","baselineTeam","--blue","myTeam"]); 
-  
-    // var process = spawn('python',['./capture.py',"--red","baselineTeam","--blue","myTeam"]); 
- 
-  //   var process = spawn('python',['./capture.py',"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
- 
- 
-  //   // var process = spawn('python',['./capture.py']); 
- 
- 
-  //   let res1;
-  
-  //   process.stdout.on('data', async(data) =>{ 
-  //  // res.send(data.toString());
-  //  let result = data.toString();
-  //  res1 = result.split(" ");
-  //  console.log(res1[10]);
-  
-  //  let point = res1[23];
-  
-  // //  var resultOverview = new Result({
-  // //    opponent: res1[7],
-  // //    winner : res1[19],
-  // //    points: res1[23]
-  // //  });
-  
-  // //  try{
-  // //    await resultOverview.save();
-  // //  }
-  // //  catch(err){
-  // //    console.log("Error in saving the results onto the Database")
-  // //  }
-  
-  // //  battleResult={
-     
-  // //  }
-  //  if(res1[19] == "Red"){
-  //      console.log("Red is the winners");
-  // }
-  //  if(res1[19] == "Blue"){
-  //   console.log("Blue is the winners");
-  //  }
-  //  });
-
-
-  //  process.stderr.on('data',(data)=>{
-  //    console.log("Error Section Here"+data);
-  //  });
-   
+    
 
   };
   

@@ -12,6 +12,7 @@ var _ = require("underscore");
 var startGame = function (userData, callback) {
     let userAdditionalInfo = '';
     let fIndex = '';
+    let userAlreadyWaiting = '';
     async.series(
       [
         function (cb) {
@@ -40,6 +41,34 @@ var startGame = function (userData, callback) {
           });
         },
         function (cb) {
+          var query = {
+            uid: userData._id
+          };
+          var projection = {
+            __v: 0
+          };
+          var options = { lean: true };
+          
+          Service.BattleService.findPlayer(query, projection, options, function (
+            err,
+            data
+          ) {
+            if (err) {
+              cb(err);
+            } else {
+                userAlreadyWaiting = (data && data[0]) || null;
+                console.log("Additional Information fetched complete and correctly for the user");
+                cb();
+              
+            }
+          });
+        },
+        function (cb) {
+
+          if(userAlreadyWaiting != null){
+            cb();
+          }
+          else{
           fUrl = userAdditionalInfo.models[fIndex];
          
           dataToSave = {uid: userData._id, fileUrl : fUrl, matched: false, username: userData.firstName };
@@ -56,6 +85,7 @@ var startGame = function (userData, callback) {
               
             }
           });
+         } 
         }
       ],
       function (err, result) {
