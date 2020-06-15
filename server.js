@@ -31,7 +31,7 @@ const init = async () => {
     app: {
       name: process.env.APP_NAME
     },
-    port:  process.env.PORT || 8000,
+    port:   process.env.PORT || 8000,
     routes: { cors: true }
   });
 
