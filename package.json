@@ -1,5 +1,5 @@
 {
-  "name": "user-onboarding-module",
+  "name": "pacman-backend",
   "main": "entry.js",
   "description": "A Node based module using Mongodb to onboard user's into a very basic application, secured using JWT authorization",
   "version": "0.1.1",
