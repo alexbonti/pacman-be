@@ -31,7 +31,7 @@ const init = async () => {
     app: {
       name: process.env.APP_NAME
     },
-    port: process.env.HAPI_PORT,
+    port: process.env.HAPI_PORT || process.env.PORT,
     routes: { cors: true }
   });
 
