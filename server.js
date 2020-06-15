@@ -567,6 +567,8 @@ const init = async () => {
   // Start Server
   await server.start();
   console.log("Server running on %s", server.info.uri);
+  console.log(process.env.PORT);
+  console.log(process.env.HAPI_PORT);
 };
 
 
