@@ -32,7 +32,7 @@ const init = async () => {
       name: process.env.APP_NAME
     },
     port: process.env.PORT || 8000,
-    routes: { cors: true }
+    "routes": { "cors": true }
   });
 
   //Register All Plugins
