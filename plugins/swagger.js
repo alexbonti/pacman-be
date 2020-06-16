@@ -6,8 +6,8 @@ const Config = require('../config')
 const swaggerOptions = {
     pathPrefixSize: 2,
     info: {
-        'title': `${process.env.APP_NAME} API Documentation`,
-        'description': `${process.env.APP_NAME} API documentation.`,
+        'title': ` Pacman API Documentation`,
+        'description': `Pacman API documentation.`,
         'version': '0.0.1'
     }
 };
