@@ -46,8 +46,10 @@ const init = async () => {
   //Register All Plugins
   await server.register(Plugins, {}, err => {
     if (err) {
+      console.log("Pluggins not loaded");
       server.log(["error"], "Error while loading plugins : " + err);
     } else {
+      console.log("Pluggins loaded");
       server.log(["info"], "Plugins Loaded");
     }
   });
@@ -576,8 +578,6 @@ const init = async () => {
   // Start Server
   await server.start();
   console.log("Server running on %s", server.info.uri);
-  console.log(process.env.PORT);
-  console.log(process.env.HAPI_PORT);
 };
 
 
