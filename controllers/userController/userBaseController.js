@@ -339,7 +339,10 @@ var updateUserProfile = function (userData, callback) {
         console.log(err);
         callback(err);
       }
-      else callback(null, { userId: userId });
+      else {
+        console.log("Reaches modification");
+        callback(null, { userId: userId });
+      }
     }
   );
 };
