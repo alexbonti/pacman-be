@@ -23,6 +23,7 @@ var smtpTransport = require("nodemailer-smtp-transport");
 var UploadManager = require('./lib/uploadManager');
 // const AWS = require('aws-sdk');
 const fs = require('fs');
+const path= require('path');
 
 
 const init = async () => {
@@ -65,7 +66,7 @@ const init = async () => {
     method: "GET",
     path: "/",
     handler: function (req, res) {
-      return res.view("welcome");
+       return res.view("welcome");
     }
   });
 
