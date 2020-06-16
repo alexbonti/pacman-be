@@ -1,15 +1,3 @@
 setuptools
-paramiko
-joblib
-future
-iso8601
-pytz
-tabulate
 gitpython
-numpy
-keras
-tensorflow
-sklearn
-sklearn
-scipy
 neat-python
