@@ -32,7 +32,14 @@ const init = async () => {
       name: process.env.APP_NAME
     },
     port: process.env.PORT || 8000,
-    "routes": { "cors": true }
+    // routes: { cors: true }
+    routes: {
+      cors: {
+          origin: ["Access-Control-Allow-Origin"],
+          headers: ["Accept", "Content-Type"],
+          additionalHeaders: ["X-Requested-With"]
+      }
+  }
   });
 
   //Register All Plugins
@@ -61,6 +68,7 @@ const init = async () => {
       return res.view("welcome");
     }
   });
+
 
   server.route(Routes);
 
