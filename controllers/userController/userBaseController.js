@@ -285,12 +285,12 @@ var updateUserProfile = function (userData, callback) {
           data
         ) {
           if (err) {
-            cb(err);
+             cb(err);
           } else {
             if (data.length == 0) cb(ERROR.INCORRECT_ACCESSTOKEN);
             else {
               customerData = (data && data[0]) || null;
-              cb(customerData);
+              cb();
             }
           }
         });
@@ -307,9 +307,9 @@ var updateUserProfile = function (userData, callback) {
           data
         ) {
           if (err) {
-            cb(err);
+             cb(err);
           } else {
-              cb(data);
+              cb();
             
           }
         });
@@ -326,9 +326,9 @@ var updateUserProfile = function (userData, callback) {
           data
         ) {
           if (err) {
-            cb(err);
+             cb(err);
           } else {
-              cb(data);
+              cb();
             
           }
         });
