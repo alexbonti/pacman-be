@@ -1,14 +1,15 @@
 {
   "name": "pacman-backend",
   "main": "entry.js",
-  "description": "A Node based module using Mongodb to onboard user's into a very basic application, secured using JWT authorization",
+  "description": "Pacman Backend",
   "version": "0.1.1",
   "private": false,
   "engines": {
     "node": "10.*"
   },
   "scripts": {
-    "start": "node entry.js"
+    "start": "node entry.js",
+    "build": "mkdirp ../uploads && mkdirp ../uploads/pacman && mkdirp ../uploads/pacman/docs && mkdirp ../uploads/pacman/profilePicture && mkdirp ../uploads/pacman/profilePicture/thumb"
   },
   "repository": {
     "type": "git",
