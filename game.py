@@ -514,11 +514,12 @@ class Game:
     """
     The Game manages the control flow, soliciting actions from agents.
     """
-
-    def __init__( self, agents, display, rules, startingIndex=0, muteAgents=False, catchExceptions=False ):
+     #(step 7) accept the snapshots folder arguments supplied
+    def __init__( self, agents, display, snapshotsFolder, rules, startingIndex=0, muteAgents=False, catchExceptions=False ):
         self.agentCrashed = False
         self.agents = agents
         self.display = display
+        self.snapshotsFolder = snapshotsFolder   #(step 8) : setting it accordingly
         self.rules = rules
         self.startingIndex = startingIndex
         self.gameOver = False
@@ -530,6 +531,13 @@ class Game:
         self.agentTimeout = False
         import cStringIO
         self.agentOutput = [cStringIO.StringIO() for agent in agents]
+        import os  #(step 9) : set up folder
+        wd = os.getcwd()
+        fol = self.snapshotsFolder
+        folder = '%s\%s' %(wd,fol)
+        self.folder = folder
+        os.mkdir(folder)
+        os.mkdir('%s\images' %(folder))
 
     def getProgress(self):
         if self.gameOver:
@@ -703,25 +711,35 @@ class Game:
             # Change the display
             self.display.update( self.state.data )
             
+
+            #(step 10) (Core logic for Screenshots and Video creation and storage)
             #Create snapshots for each move
             import pyautogui
+           
 
             
             myScreenshot = pyautogui.screenshot()
             #   myScreenshot.save(r'C:\Users\HP\Snapshots\screenshot%d.png' % (i))
             #   myScreenshot.save(r'F:\Pacman\contest\contest\img-0%d.png' % (i))
-            myScreenshot.save(r'F:\Pacman\contest\contest\images\image%d.jpg' % (mm))
+            # import os
+            # wd = os.getcwd()
+            # fol = self.snapshotsFolder
+            # folder = '%s\%s' %(wd,fol)
+            # os.mkdir(folder)
+            ff = self.folder
+            myScreenshot.save(r'%s\images\image%d.jpg' % (ff,mm))
             mm = mm+1
 
             if(mm == 101):
                 mm = 1
                 print("Reaching here")
+                print(self.snapshotsFolder)
                 import cv2
                 import numpy as np
                 import os
                 from os.path import isfile, join
-                pathIn= './images/'
-                pathOut = 'video.avi'
+                pathIn= './%s/images/' %(self.snapshotsFolder)
+                pathOut = './%s/video.avi' %(self.snapshotsFolder)
                 fps = 5
                 frame_array = []
                 files = [f for f in os.listdir(pathIn) if isfile(join(pathIn, f))]

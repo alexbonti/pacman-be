@@ -60,7 +60,6 @@ from game import Agent
 from game import reconstituteGrid
 import sys, util, types, time, random, imp
 import keyboardAgents
-import urllib
 
 # If you change these, you won't affect the server, so you can't cheat
 KILL_POINTS = 0
@@ -365,13 +364,13 @@ class CaptureRules:
 
   def __init__(self, quiet = False):
     self.quiet = quiet
-
-  def newGame( self, layout, agents, display, length, muteAgents, catchExceptions ):
+                                                                  #(step 5) : accept the folder name
+  def newGame( self, layout, agents, display, length, muteAgents, snapshotsFolder, catchExceptions ):
     initState = GameState()
     initState.initialize( layout, len(agents) )
     starter = random.randint(0,1)
     print('%s team starts' % ['Red', 'Blue'][starter])
-    game = Game(agents, display, self, startingIndex=starter, muteAgents=muteAgents, catchExceptions=catchExceptions)
+    game = Game(agents, display, snapshotsFolder, self,  startingIndex=starter, muteAgents=muteAgents, catchExceptions=catchExceptions) #(step 6) (Important) : sending the arguments to game.py which has the modification code required
     game.state = initState
     game.length = length
     game.state.data.timeleft = length
@@ -765,14 +764,11 @@ def readCommand( argv ):
   """
   parser = OptionParser(usageStr)
 
-  # link = "https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/Docs_wOKwe6VbvRUS.py"
-  # f = urllib.urlopen(link)
-  # myfile = f.read()
-
   parser.add_option('-r', '--red', help=default('Red team'),
-                    default= 'myTeam')
+                    default='baselineTeam')
   parser.add_option('-b', '--blue', help=default('Blue team'),
                     default='baselineTeam')
+  parser.add_option('-s', '--snapshotsFolder', default='images') #Add Video option (step 1)
   parser.add_option('--red-name', help=default('Red team name'),
                     default='Red')
   parser.add_option('--blue-name', help=default('Blue team name'),
@@ -798,7 +794,7 @@ def readCommand( argv ):
                     help='Same as -q but agent output is also suppressed', default=False)
 
   parser.add_option('-z', '--zoom', type='float', dest='zoom',
-                    help=default('Zoom in the graphics'), default=1)
+                    help=default('Zoom in the graphics'), default=1.25)
   parser.add_option('-i', '--time', type='int', dest='time',
                     help=default('TIME limit of a game in moves'), default=100, metavar='TIME')
   parser.add_option('-n', '--numGames', type='int',
@@ -817,7 +813,6 @@ def readCommand( argv ):
   options, otherjunk = parser.parse_args(argv)
   assert len(otherjunk) == 0, "Unrecognized options: " + str(otherjunk)
   args = dict()
-
 
   # Choose a display format
   #if options.pygame:
@@ -844,8 +839,10 @@ def readCommand( argv ):
 
   args['redTeamName'] = options.red_name
   args['blueTeamName'] = options.blue_name
+  args['snapshotsFolder'] = options.snapshotsFolder #Store the folder name associated (step 2)
+  
 
-  if options.fixRandomSeed: random.seed('Pacman Capture the Flag')
+  if options.fixRandomSeed: random.seed('cs188')
 
   # Special case: recorded games don't use the runGames method or args structure
   if options.replay != None:
@@ -919,12 +916,7 @@ def loadAgents(isRed, factory, textgraphics, cmdLineArgs):
     if not factory.endswith(".py"):
       factory += ".py"
 
-    # link = "https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/Docs_wOKwe6VbvRUS.py"
-    # f = urllib.urlopen(link)
-    # myfile = eval(f.read())
-
-    # module = imp.load_source('player' + str(int(isRed)), 'https://s3.au-syd.cloud-object-storage.appdomain.cloud/ipan-v2-bucket/files/docs/original/',myfile);
-    module = imp.load_source('player' + str(int(isRed)),factory)
+    module = imp.load_source('player' + str(int(isRed)), factory)
   except (NameError, ImportError):
     print >>sys.stderr, 'Error: The team "' + factory + '" could not be loaded! '
     traceback.print_exc()
@@ -969,9 +961,8 @@ def replayGame( layout, agents, actions, display, length, redTeamName, blueTeamN
       rules.process(state, game)
 
     display.finish()
-
-def runGames( layouts, agents, display, length, numGames, record, numTraining, redTeamName, blueTeamName, muteAgents=False, catchExceptions=False ):
-  print 'test'
+    #Supply the arguments (step 3)                                                                         #(step 3)
+def runGames( layouts, agents, display, length, numGames, record, numTraining, redTeamName, blueTeamName, snapshotsFolder ,muteAgents=False, catchExceptions=False ):
   
   rules = CaptureRules()
   games = []
@@ -990,7 +981,7 @@ def runGames( layouts, agents, display, length, numGames, record, numTraining, r
     else:
         gameDisplay = display
         rules.quiet = False
-    g = rules.newGame( layout, agents, gameDisplay, length, muteAgents, catchExceptions )
+    g = rules.newGame( layout, agents, gameDisplay, length, muteAgents, snapshotsFolder, catchExceptions ) #Send it along (step 4) to newGame function part of CaptureRules() class for rules object ( line 367 for class)
     g.run()
     if not beQuiet: games.append(g)
 

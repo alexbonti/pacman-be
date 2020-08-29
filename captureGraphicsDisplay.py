@@ -286,7 +286,7 @@ class PacmanGraphics:
     begin_graphics(screen_width,
                    screen_height,
                    BACKGROUND_COLOR,
-                   "CS188 Pacman")
+                   "Pacman Capture the Flag")
 
   def drawPacman(self, pacman, index):
     position = self.getPosition(pacman)
