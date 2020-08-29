@@ -800,7 +800,7 @@ def readCommand( argv ):
   parser.add_option('-z', '--zoom', type='float', dest='zoom',
                     help=default('Zoom in the graphics'), default=1)
   parser.add_option('-i', '--time', type='int', dest='time',
-                    help=default('TIME limit of a game in moves'), default=250, metavar='TIME')
+                    help=default('TIME limit of a game in moves'), default=100, metavar='TIME')
   parser.add_option('-n', '--numGames', type='int',
                     help=default('Number of games to play'), default=1)
   parser.add_option('-f', '--fixRandomSeed', action='store_true',
@@ -817,6 +817,7 @@ def readCommand( argv ):
   options, otherjunk = parser.parse_args(argv)
   assert len(otherjunk) == 0, "Unrecognized options: " + str(otherjunk)
   args = dict()
+
 
   # Choose a display format
   #if options.pygame:
@@ -970,7 +971,8 @@ def replayGame( layout, agents, actions, display, length, redTeamName, blueTeamN
     display.finish()
 
 def runGames( layouts, agents, display, length, numGames, record, numTraining, redTeamName, blueTeamName, muteAgents=False, catchExceptions=False ):
-
+  print 'test'
+  
   rules = CaptureRules()
   games = []
 
