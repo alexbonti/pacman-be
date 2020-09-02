@@ -57,6 +57,7 @@ var uploadImage = function (payloadData, callback) {
 var uploadDocument = function (payloadData, callback) {
   var documentFileUrl;
   var documentFile = payloadData.documentFile;
+  
   if (payloadData.documentFile && payloadData.documentFile.filename) {
     documentFileUrl = {
       original: null

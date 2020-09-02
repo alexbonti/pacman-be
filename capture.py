@@ -768,7 +768,7 @@ def readCommand( argv ):
                     default='baselineTeam')
   parser.add_option('-b', '--blue', help=default('Blue team'),
                     default='baselineTeam')
-  parser.add_option('-s', '--snapshotsFolder', default='images') #Add Video option (step 1)
+  parser.add_option('-s', '--snapshotsFolder', default='snapshots') #Add Video option (step 1)
   parser.add_option('--red-name', help=default('Red team name'),
                     default='Red')
   parser.add_option('--blue-name', help=default('Blue team name'),

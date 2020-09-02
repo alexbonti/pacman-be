@@ -5,7 +5,8 @@ const LeaderBoardSchema= new Schema({
     Player1:{ type:String},
     Player2:{type:String},
     Winner:{type:String},
-    Margin:{type:Number}
+    Margin:{type:Number},
+    Highlights:{type:String}
 })
 
 module.exports= Result = mongoose.model('leaderboard',LeaderBoardSchema);

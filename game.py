@@ -739,7 +739,7 @@ class Game:
                 import os
                 from os.path import isfile, join
                 pathIn= './%s/images/' %(self.snapshotsFolder)
-                pathOut = './%s/video.avi' %(self.snapshotsFolder)
+                pathOut = './%s/%s.avi' %(self.snapshotsFolder,self.snapshotsFolder)
                 fps = 5
                 frame_array = []
                 files = [f for f in os.listdir(pathIn) if isfile(join(pathIn, f))]

@@ -21,9 +21,12 @@ var Controller = require("./controllers");
 var nodemailer = require("nodemailer");
 var smtpTransport = require("nodemailer-smtp-transport");
 var UploadManager = require('./lib/uploadManager');
+var {v4:uuidv4} = require('uuid');
 // const AWS = require('aws-sdk');
 const fs = require('fs');
 const path= require('path');
+var UniversalFunctions = require("./utils/universalFunctions");
+var CONFIG = require("./config");
 
 
 const init = async () => {
@@ -75,15 +78,15 @@ const init = async () => {
   });
 
   server.events.on("response", function (request) {
-    console.log(
-      request.info.remoteAddress +
-      ": " +
-      request.method.toUpperCase() +
-      " " +
-      request.url.pathname +
-      " --> " +
-      request.response.statusCode
-    );
+    // console.log(
+    //   request.info.remoteAddress +
+    //   ": " +
+    //   request.method.toUpperCase() +
+    //   " " +
+    //   request.url.pathname +
+    //   " --> " +
+    //   request.response.statusCode
+    // );
     console.log("Request payload:", request.payload);
   });
 
@@ -99,6 +102,7 @@ const init = async () => {
     let result;
     let winner, winnerDetails;
     let loser, loserDetails;
+    
     console.log("Cron started Mate!!");
     async.series(
       [
@@ -290,7 +294,8 @@ const init = async () => {
     let winnerDetails;
     let loserDetails;
     let winnerMargin=0;
-
+    let gameId = uuidv4();
+    var documentFileUrl;
 
     async.series(
       [
@@ -314,7 +319,7 @@ const init = async () => {
         },
         function (cb) {
           
-          var process = spawn('python',['./capture.py',"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
+          var process = spawn('python',['./capture.py',"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
           let res1;
         
           process.stdout.on('data', async(data) =>{ 
@@ -454,13 +459,34 @@ const init = async () => {
              });
 
           },
+          //Store the Video File 
+          function (cb) {
+            var fileContent = gameId;
+            
+            UploadManager.uploadVideo(fileContent, CONFIG.AWS_S3_CONFIG.s3BucketCredentials.folder.files, UniversalFunctions.generateRandomString(), function (err, uploadedInfo) {
+              if (err) {
+                console.log("Issue in Video UPload");
+                cb(err)
+              } else {
+                documentFileUrl = {
+                  original: uploadedInfo.profilePicture,
+                  fileName : 'video.avi'
+                }
+                console.log("Video Saved buddy");
+                console.log(documentFileUrl);
+                cb();
+              }
+            });
+          
+          },
 
           function (cb){
             let battleDetails =  {
               Player1: player1name,
               Player2: player2name,
               Winner: winnerName,
-              Margin: winnerMargin
+              Margin: winnerMargin,
+              Highlights: documentFileUrl.original
             };
   
             Service.LeaderBoardService.addIntoLeaderBoard(battleDetails, function(err,data){
@@ -572,6 +598,29 @@ const init = async () => {
   await server.start();
   console.log("Server running on %s", server.info.uri);
 };
+
+
+function check() {
+  var gameId = '6be5ace2-7fef-4f6d-9a7d-ac3ddad20157';
+  var fileContent = gameId;
+
+  var documentFileUrl;
+  UploadManager.uploadVideo(fileContent, CONFIG.AWS_S3_CONFIG.s3BucketCredentials.folder.files, UniversalFunctions.generateRandomString(), function (err, uploadedInfo) {
+    if (err) {
+      console.log("Issue in Video UPload");
+      console.log(err);
+    } else {
+      documentFileUrl = {
+        original: uploadedInfo.profilePicture,
+        fileName : '6be5ace2-7fef-4f6d-9a7d-ac3ddad20157.avi'
+      }
+      console.log("Video Saved buddy");
+      console.log(documentFileUrl);
+    }
+  });
+
+}
+
 
 
 

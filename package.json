@@ -8,7 +8,7 @@
     "node": "10.*"
   },
   "scripts": {
-    "start": "node entry.js",
+    "start": "nodemon entry.js",
     "build": "mkdirp ../uploads && mkdirp ../uploads/pacman && mkdirp ../uploads/pacman/docs && mkdirp ../uploads/pacman/profilePicture && mkdirp ../uploads/pacman/profilePicture/thumb"
   },
   "repository": {
@@ -51,8 +51,12 @@
     "randomstring": "1.1.5",
     "socket.io": "2.2.0",
     "underscore": "1.9.1",
+    "uuid": "^8.3.0",
     "validator": "11.0.0"
   },
   "author": "Navit Choudhary",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }
