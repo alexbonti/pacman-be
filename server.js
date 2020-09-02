@@ -27,6 +27,7 @@ const fs = require('fs');
 const path= require('path');
 var UniversalFunctions = require("./utils/universalFunctions");
 var CONFIG = require("./config");
+var rimraf = require("rimraf");
 
 
 const init = async () => {
@@ -571,6 +572,15 @@ const init = async () => {
               cb();
           });
          
+          },
+
+          //Delete the associated screenshots and video with the game
+          function (cb) {
+            rimraf("./"+gameId, function () { 
+              console.log("done deleting the required folder");
+              cb();
+            });
+          
           }
 
          
