@@ -583,8 +583,6 @@ const init = async () => {
           
           }
 
-         
-  
       ],
       function (err, user) {
         if (!err)
@@ -609,6 +607,7 @@ const init = async () => {
   console.log("Server running on %s", server.info.uri);
 };
 
+// check();
 
 function check() {
   var gameId = '6be5ace2-7fef-4f6d-9a7d-ac3ddad20157';
