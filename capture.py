@@ -794,7 +794,7 @@ def readCommand( argv ):
                     help='Same as -q but agent output is also suppressed', default=False)
 
   parser.add_option('-z', '--zoom', type='float', dest='zoom',
-                    help=default('Zoom in the graphics'), default=1.25)
+                    help=default('Zoom in the graphics'), default=1.00)
   parser.add_option('-i', '--time', type='int', dest='time',
                     help=default('TIME limit of a game in moves'), default=100, metavar='TIME')
   parser.add_option('-n', '--numGames', type='int',

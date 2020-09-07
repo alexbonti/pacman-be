@@ -770,6 +770,11 @@ class Game:
                   out.write(frame_array[i])
                 
                 out.release()
+                import moviepy.editor as moviepy
+
+                clip = moviepy.VideoFileClip(pathOut)
+                path = './%s/%s.mp4' %(self.snapshotsFolder,self.snapshotsFolder)
+                clip.write_videofile(path)
             
            
             ###idx = agentIndex - agentIndex % 2 + 1

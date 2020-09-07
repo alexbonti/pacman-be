@@ -471,7 +471,7 @@ const init = async () => {
               } else {
                 documentFileUrl = {
                   original: uploadedInfo.profilePicture,
-                  fileName : 'video.avi'
+                  fileName : 'video.mp4'
                 }
                 console.log("Video Saved buddy");
                 console.log(documentFileUrl);
