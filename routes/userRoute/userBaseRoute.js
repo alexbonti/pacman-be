@@ -455,7 +455,9 @@ var startGame = {
           request.auth.credentials.userData) ||
         null;
       var fileUrlIndex = request.payload.fileUrl;
+      var demoMode = request.payload.demoMode;
       userData.fileUrlIndex = fileUrlIndex;
+      userData.demoMode = demoMode;
       return new Promise((resolve, reject) => {
         if (userData && userData._id) {
           Controller.BattleBaseController.startGame(userData, function(

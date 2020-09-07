@@ -6,10 +6,311 @@ var TokenManager = require("../../lib/tokenManager");
 var CodeGenerator = require("../../lib/codeGenerator");
 var ERROR = UniversalFunctions.CONFIG.APP_CONSTANTS.STATUS_MSG.ERROR;
 var _ = require("underscore");
+var UploadManager = require('../../lib/uploadManager');
+var {v4:uuidv4} = require('uuid');
+// const AWS = require('aws-sdk');
+const fs = require('fs');
+const path= require('path');
+var UniversalFunctions = require("../../utils/universalFunctions");
+var CONFIG = require("../../config");
+var rimraf = require("rimraf");
+
 
 
 //start Game
 var startGame = function (userData, callback) {
+    let mode = userData.demoMode;
+    console.log(mode);
+
+    //Demo Mode Game procedure
+    if(mode == true){
+    console.log("True here");
+    console.log(userData.fileUrlIndex);
+    var spawn = require("child_process").spawn; 
+    
+
+    const path = require('path');
+   
+    // const user1file = path.basename(player1url);
+  
+    let winner;
+    let loser;
+    let winnerName;
+    let loserName;
+    let winnerDetails;
+    let loserDetails;
+    let winnerMargin=0;
+    let gameId = uuidv4();
+    var documentFileUrl;
+    let userAdditionalInfo = '';
+    let fIndex = '';
+    let userAlreadyWaiting = '';
+    let player1id = '';
+    let user1file='';
+    let x = false;
+    let player1name = userData.firstName;
+
+      async.series(
+        [
+          function (cb) {
+            fIndex = parseInt(userData.fileUrlIndex);
+  
+            var query = {
+              playerId: userData._id
+            };
+            var projection = {
+              __v: 0
+            };
+            var options = { lean: true };
+            
+            Service.UserService.getUserInfo(query, projection, options, function (
+              err,
+              data
+            ) {
+              if (err) {
+                cb(err);
+              } else {
+                  userAdditionalInfo = (data && data[0]) || null;
+                  console.log("Additional Information fetched complete and correctly for the user");
+                  cb();
+                
+              }
+            });
+          },
+          function (cb) {
+            player1id = userAdditionalInfo.playerId;
+            // console.log(userAdditionalInfo.fileName[fIndex]);
+            // console.log(userData.firstName);
+            user1file = path.basename(userAdditionalInfo.models[fIndex]);
+            UploadManager.getItem(user1file,player1id,function(err,data){
+              if (err) cb(err);
+              else {
+                cb(null);
+              }
+          }); 
+              
+          },
+          
+          function (cb) {
+            const p = require("process");
+            var file = p.cwd()+'/capture.py';
+            console.log(file);
+            var process = spawn('python',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+'baselineTeam.py']); 
+            let res1;
+          
+            process.stdout.on('data', async(data) =>{ 
+             let result = data.toString();
+             res1 = result.split(" ");
+             console.log(res1[10]);
+          
+          
+             if(res1[19] == "Red"){
+               winner = player1id;
+               winnerMargin = res1[23];
+               x = true;
+               cb();
+              }
+              else if(res1[19] == "Blue"){
+               loserName = player1name;
+               winnerMargin = Math.abs(parseInt(res1[23]));
+               cb();
+              }
+              else{
+                winner = player1id;
+                loser = "123456";
+                winnerName = 'Draw';
+                winnerMargin = 0;
+                cb();
+              }
+           });
+        
+        
+           process.stderr.on('data',(data)=>{
+             console.log("Error Section Here"+data);
+           });
+           
+          
+          },
+  
+            //Update Details Accordingly for the Winner
+            function (cb) {
+              let matchesPlayed = userAdditionalInfo.matchesPlayed;
+              matchesPlayed++;
+              let matchesWon;
+              let highestScore;
+              let dataToSet;
+
+              if(x == true){
+                matchesWon = userAdditionalInfo.matchesWon;
+               
+                if(winnerMargin>0){
+                 matchesWon++;
+                }
+                
+                highestScore = parseInt(userAdditionalInfo.highestScore);
+                if(winnerMargin>highestScore){
+                  highestScore = winnerMargin;
+                }
+                 dataToSet = {
+                  matchesPlayed,
+                  matchesWon,
+                  highestScore
+                }
+     
+              }
+              else{
+                matchesWon = userAdditionalInfo.matchesWon;
+               
+                highestScore = parseInt(userAdditionalInfo.highestScore);
+                if(winnerMargin>highestScore){
+                  highestScore = winnerMargin;
+                }
+                 dataToSet = {
+                  matchesPlayed,
+                  matchesWon,
+                  highestScore
+                }
+     
+              }
+    
+              
+              var query = {
+                playerId: userData._id
+               };
+               var options = { lean: true };
+               Service.UserService.updateUserAdditionalInfo(query, dataToSet, { useFindAndModify: false }, function (
+                 err,
+                 data
+               ) {
+                 if (err) {
+                   cb(err);
+                 } else {
+                   console.log("Data Modified");
+                   cb();
+                 }
+               });
+             
+  
+            },
+    
+            //Store the Video File 
+            function (cb) {
+              var fileContent = gameId;
+              
+              UploadManager.uploadVideo(fileContent, CONFIG.AWS_S3_CONFIG.s3BucketCredentials.folder.files, UniversalFunctions.generateRandomString(), function (err, uploadedInfo) {
+                if (err) {
+                  console.log("Issue in Video UPload");
+                  cb(err)
+                } else {
+                  documentFileUrl = {
+                    original: uploadedInfo.profilePicture,
+                    fileName : 'video.mp4'
+                  }
+                  console.log("Video Saved buddy");
+                  console.log(documentFileUrl);
+                  cb();
+                }
+              });
+            
+            },
+  
+            function (cb){
+  
+              let battleDetails= {};
+              if(winnerMargin == 0){
+                battleDetails =  {
+                  Player1: player1name,
+                  Player2: "Demo",
+                  Winner: "Draw",
+                  Margin: winnerMargin,
+                  Highlights: documentFileUrl.original
+                };
+              }
+              else{
+              if(x == true){
+                 battleDetails =  {
+                  Player1: player1name,
+                  Player2: "Demo",
+                  Winner: player1name,
+                  Margin: winnerMargin,
+                  Highlights: documentFileUrl.original
+                };
+              }
+
+              else{
+                 battleDetails =  {
+                  Player1: player1name,
+                  Player2: "Demo",
+                  Winner: "Demo",
+                  Margin: winnerMargin,
+                  Highlights: documentFileUrl.original
+                };
+              }
+            }
+              
+    
+              Service.LeaderBoardService.addIntoLeaderBoard(battleDetails, function(err,data){
+                if(err){
+                   cb(err);
+                }else{
+                  console.log("Added into the Leaderboard");
+                  cb();
+                }
+              })
+            },
+    
+            
+            function (cb) {
+              fs.unlink(player1id+'.py', function (err) {
+                if (err) throw err;
+                // if no error, file has been deleted successfully
+                console.log('File deleted!');
+                cb();
+            });
+           
+            },
+           
+            function (cb) {
+              fs.unlink(player1id+'.pyc', function (err) {
+                if (err) throw err;
+                // if no error, file has been deleted successfully
+                console.log('File deleted!');
+                cb();
+            });
+           
+            },
+           
+  
+            //Delete the associated screenshots and video with the game
+            function (cb) {
+              rimraf("./"+gameId, function () { 
+                console.log("done deleting the required folder");
+                cb();
+              });
+            
+            }
+  
+        ],
+        function (err, user) {
+          if (!err)
+            {
+              console.log("Game Logic Done");
+            }
+          else {
+            console.log(err);
+            console.log("Error in Operations");
+          }
+        }
+      );
+  
+  
+
+
+
+
+
+    }
+    else{
     let userAdditionalInfo = '';
     let fIndex = '';
     let userAlreadyWaiting = '';
@@ -96,7 +397,7 @@ var startGame = function (userData, callback) {
         else callback(null, { "msg": 1 });
       }
     );
-
+    }
 
   };
 
