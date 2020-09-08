@@ -319,8 +319,10 @@ const init = async () => {
             
         },
         function (cb) {
+          const p = require("process");
+          var file = p.cwd()+'/berkeley/capture.py';
           
-          var process = spawn('python',['./capture.py',"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
+          var process = spawn('python',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
           let res1;
         
           process.stdout.on('data', async(data) =>{ 
@@ -356,6 +358,7 @@ const init = async () => {
       
       
          process.stderr.on('data',(data)=>{
+           console.log(data);
            console.log("Error Section Here"+data);
          });
          

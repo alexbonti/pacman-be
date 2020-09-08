@@ -93,7 +93,7 @@ var startGame = function (userData, callback) {
           
           function (cb) {
             const p = require("process");
-            var file = p.cwd()+'/capture.py';
+            var file = p.cwd()+'/berkeley/capture.py';
             console.log(file);
             var process = spawn('python',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+'baselineTeam.py']); 
             let res1;
@@ -126,6 +126,7 @@ var startGame = function (userData, callback) {
         
         
            process.stderr.on('data',(data)=>{
+             console.log(data);
              console.log("Error Section Here"+data);
            });
            
