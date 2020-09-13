@@ -88,3 +88,47 @@ $ npm run start
 ```
 
 The current version of your application would be running on **http://localhost:8000** or **http://IP_OF_SERVER:8000** (in case you are running on the server)
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Ubuntu Machine Installation (Version 20.x)
+Installation steps on ubuntu 20.x:
+
+1) sudo apt install curl 
+2) curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+3) sudo apt install nodejs
+4) sudo apt-get install git
+
+5) CLone the backend repo and run the commands
+  --> cp .env.example .env
+  --> npm i
+  --> npm run build
+  --> npm start
+
+6) Clone the Front end repo and run the commands
+   --> npm i
+   --> npm start
+
+7) sudo apt install python2
+8) sudo apt-get install python-tk
+9) Change the path to / from \ in game.py inside berkeley folder at Backend (line 537,540 and 730)
+
+-->change python to python2 while spawn in node 
+
+10) pip2 installation:
+
+ --> curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
+
+ --> sudo python2 get-pip.py
+ --> pip2 --version (check)
+
+11) Dependency installation
+ --> pip2 install opencv-python==4.2.0.32
+ --> pip install pyautogui
+ --> sudo apt-get install scrot
+ --> pip install MoviePy
+
+12) Modify server and battleBaseController
+   process.end(cb())
+   process.data()
+
