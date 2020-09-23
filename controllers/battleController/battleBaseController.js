@@ -95,7 +95,7 @@ var startGame = function (userData, callback) {
             const p = require("process");
             var file = p.cwd()+'/berkeley/capture.py';
             console.log(file);
-            var process = spawn('python',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+'baselineTeam.py']); 
+            var process = spawn('python2',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+'baselineTeam.py']); 
             let res1;
           
             process.stdout.on('data', async(data) =>{ 
@@ -108,26 +108,34 @@ var startGame = function (userData, callback) {
                winner = player1id;
                winnerMargin = res1[23];
                x = true;
-               cb();
+               console.log("Player 1  winner");
+               //cb(null);
               }
               else if(res1[19] == "Blue"){
                loserName = player1name;
                winnerMargin = Math.abs(parseInt(res1[23]));
-               cb();
+               console.log("Player 1 lost");
+               //cb(null);
               }
               else{
                 winner = player1id;
                 loser = "123456";
                 winnerName = 'Draw';
                 winnerMargin = 0;
-                cb();
+                console.log("Player 1 plays a Drawn case");
+                //cb(null);
               }
            });
+           
+           process.stdout.on('end', async(data) =>{ 
+               cb();
+            });
         
         
            process.stderr.on('data',(data)=>{
              console.log(data);
              console.log("Error Section Here"+data);
+             
            });
            
           

@@ -37,7 +37,12 @@ const init = async () => {
       name: process.env.APP_NAME
     },
     port: process.env.PORT || 8000,
-    routes: { cors: true }
+    routes: { cors: true },
+     //routes:{timeout:{
+     //          server: 120000 * 4,
+     //          socket: 120000* 6
+    // }}
+               
   });
 
   //Register All Plugins
@@ -322,7 +327,7 @@ const init = async () => {
           const p = require("process");
           var file = p.cwd()+'/berkeley/capture.py';
           
-          var process = spawn('python',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
+          var process = spawn('python2',[file,"--snapshotsFolder="+gameId,"--red="+player1id+'.py',"--blue="+player2id+'.py']); 
           let res1;
         
           process.stdout.on('data', async(data) =>{ 
@@ -337,7 +342,7 @@ const init = async () => {
              winnerName = player1name;
              loserName = player2name;
              winnerMargin = res1[23];
-             cb();
+             //cb();
             }
             else if(res1[19] == "Blue"){
              winner = player2id;
@@ -345,16 +350,20 @@ const init = async () => {
              winnerName = player2name;
              loserName = player1name;
              winnerMargin = Math.abs(parseInt(res1[23]));
-             cb();
+             //cb();
             }
             else{
               winner = player1id;
               loser = player2id;
               winnerName = 'Draw';
               winnerMargin = 0;
-              cb();
+              //cb();
             }
          });
+         
+         process.stdout.on('end', async(data) =>{ 
+             cb();
+          });
       
       
          process.stderr.on('data',(data)=>{
@@ -606,7 +615,12 @@ const init = async () => {
   
 
   // Start Server
+<<<<<<< HEAD
    await server.start();
+=======
+  
+  await server.start();
+>>>>>>> 8048b93967568fd8f0e4b532b4a503c064b10b24
   console.log("Server running on %s", server.info.uri);
 };
 

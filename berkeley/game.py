@@ -534,10 +534,10 @@ class Game:
         import os  #(step 9) : set up folder
         wd = os.getcwd()
         fol = self.snapshotsFolder
-        folder = '%s\%s' %(wd,fol)
+        folder = '%s/%s' %(wd,fol)
         self.folder = folder
         os.mkdir(folder)
-        os.mkdir('%s\images' %(folder))
+        os.mkdir('%s/images' %(folder))
 
     def getProgress(self):
         if self.gameOver:
@@ -727,13 +727,11 @@ class Game:
             # folder = '%s\%s' %(wd,fol)
             # os.mkdir(folder)
             ff = self.folder
-            myScreenshot.save(r'%s\images\image%d.jpg' % (ff,mm))
+            myScreenshot.save(r'%s/images/image%d.jpg' % (ff,mm))
             mm = mm+1
 
             if(mm == 101):
                 mm = 1
-                print("Reaching here")
-                print(self.snapshotsFolder)
                 import cv2
                 import numpy as np
                 import os
