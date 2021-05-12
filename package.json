@@ -47,7 +47,7 @@
     "moment-range": "4.0.2",
     "mongoose": "5.8.0",
     "node-cron": "^2.0.3",
-    "nodemailer": "^6.4.2",
+    "nodemailer": "^6.4.16",
     "nodemailer-smtp-transport": "^2.7.4",
     "randomstring": "1.1.5",
     "rimraf": "^3.0.2",
