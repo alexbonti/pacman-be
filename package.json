@@ -54,7 +54,7 @@
     "socket.io": "2.2.0",
     "underscore": "1.9.1",
     "uuid": "^8.3.0",
-    "validator": "11.0.0"
+    "validator": "13.7.0"
   },
   "author": "Navit Choudhary",
   "license": "Apache-2.0",
