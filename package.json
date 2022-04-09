@@ -43,7 +43,7 @@
     "lodash": "4.17.15",
     "md5": "2.2.1",
     "mkdirp": "^1.0.4",
-    "moment": "2.24.0",
+    "moment": "2.29.2",
     "moment-range": "4.0.2",
     "mongoose": "5.8.0",
     "node-cron": "^2.0.3",
