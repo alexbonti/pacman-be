@@ -38,7 +38,7 @@
     "hapi-swagger": "10.0.0",
     "ibm-cos-sdk": "1.5.4",
     "joi": "14.3.1",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "knox": "0.9.2",
     "lodash": "4.17.15",
     "md5": "2.2.1",
